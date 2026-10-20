@@ -1,0 +1,12 @@
+# Ignore uploaded proof files (preserve directory with .gitkeep)
+/uploads/proofs/*
+!/uploads/proofs/.gitkeep
+
+# Operating system files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE config
+.vscode/
+.idea/
