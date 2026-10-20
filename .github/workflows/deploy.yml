@@ -21,8 +21,8 @@ jobs:
         run: |
           cat << 'EOF' > .env
           DB_HOST=${{ secrets.DB_HOST }}
-          DB_USER=${{ secrets.DB_USER }}
-          DB_PASS=${{ secrets.DB_PASS || secrets.DB_PASSWORD }}
+          DB_USER=${{ secrets.DB_USER || secrets.FTP_USERNAME }}
+          DB_PASS=${{ secrets.DB_PASS || secrets.DB_PASSWORD || secrets.FTP_PASSWORD }}
           DB_NAME=${{ secrets.DB_NAME }}
           EOF
         shell: bash
@@ -30,7 +30,7 @@ jobs:
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.6
         with:
-          server: ${{ secrets.FTP_SERVER }}
+          server: ${{ secrets.FTP_HOSTNAME }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftp
