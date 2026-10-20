@@ -1,3 +1,13 @@
+# Environment files & Local credentials (NEVER commit to GitHub)
+.env
+.env.local
+.env.production
+!.env.example
+
+config.local.php
+config.production.php
+db_credentials.php
+
 # Ignore uploaded proof files (preserve directory with .gitkeep)
 /uploads/proofs/*
 !/uploads/proofs/.gitkeep
@@ -10,3 +20,4 @@ desktop.ini
 # IDE config
 .vscode/
 .idea/
+*.log
