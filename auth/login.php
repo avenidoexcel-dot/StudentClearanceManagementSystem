@@ -25,10 +25,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             SELECT u.*, d.name AS department_name 
             FROM users u
             LEFT JOIN departments d ON u.department_id = d.id
-            WHERE (u.username = :user OR u.student_id = :user) AND u.status = 'active'
+            WHERE (u.username = ? OR u.student_id = ?) AND u.status = 'active'
             LIMIT 1
         ");
-        $stmt->execute(['user' => $username]);
+        $stmt->execute([$username, $username]);
         $user = $stmt->fetch();
 
         // In seed data: default password for testing can be verified with password_verify
