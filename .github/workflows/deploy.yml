@@ -17,13 +17,19 @@ jobs:
         with:
           fetch-depth: 2
 
-      - name: Generate Production .env from GitHub Secrets
+      - name: Generate Production config.production.php from Secrets
+        env:
+          FTP_USER: ${{ secrets.FTP_USERNAME }}
+          FTP_PASS: ${{ secrets.FTP_PASSWORD }}
+          DB_H: ${{ secrets.DB_HOST }}
+          DB_N: ${{ secrets.DB_NAME }}
         run: |
-          cat << 'EOF' > .env
-          DB_HOST=${{ secrets.DB_HOST }}
-          DB_USER=${{ secrets.DB_USER || secrets.FTP_USERNAME }}
-          DB_PASS=${{ secrets.DB_PASS || secrets.DB_PASSWORD || secrets.FTP_PASSWORD }}
-          DB_NAME=${{ secrets.DB_NAME }}
+          cat << EOF > config.production.php
+          <?php
+          define('DB_HOST', '${DB_H:-sql200.byetcluster.com}');
+          define('DB_USER', '${FTP_USER:-if0_43197826}');
+          define('DB_PASS', '${FTP_PASS}');
+          define('DB_NAME', '${DB_N:-if0_43197826_clearance}');
           EOF
         shell: bash
 

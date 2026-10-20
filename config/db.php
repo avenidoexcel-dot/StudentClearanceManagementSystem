@@ -4,6 +4,11 @@
  * Supports GitHub Secrets, .env, server config files, and automatic local XAMPP fallback
  */
 
+// Enable error reporting to diagnose hosting issues
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -37,7 +42,7 @@ foreach ($envFiles as $envFile) {
         if ($lines !== false) {
             foreach ($lines as $line) {
                 $line = trim($line);
-                if ($line === '' || str_starts_with($line, '#')) continue;
+                if ($line === '' || substr($line, 0, 1) === '#') continue;
                 if (strpos($line, '=') !== false) {
                     list($k, $v) = explode('=', $line, 2);
                     $k = trim($k);
@@ -53,11 +58,11 @@ foreach ($envFiles as $envFile) {
 }
 
 // 3. Resolve Environment Credentials
-// Hierarchy: Defined Constants -> Environment/Secrets ($_ENV/getenv) -> Localhost Defaults
+// Hierarchy: Defined Constants -> Environment/Secrets ($_ENV/getenv) -> Defaults
 $http_host = $_SERVER['HTTP_HOST'] ?? 'localhost';
 $is_local  = in_array($http_host, ['localhost', '127.0.0.1', '::1']) 
-             || str_starts_with($http_host, '192.168.') 
-             || str_starts_with($http_host, '10.');
+             || (substr($http_host, 0, 8) === '192.168.') 
+             || (substr($http_host, 0, 3) === '10.');
 
 // Host
 if (!defined('DB_HOST')) {
@@ -114,12 +119,12 @@ try {
         <h2 style='margin-top: 0;'>⚠️ Database Connection Error</h2>
         <p>Could not connect to MySQL database <strong>" . htmlspecialchars(DB_NAME) . "</strong> on host <strong>" . htmlspecialchars(DB_HOST) . "</strong>.</p>
         <p style='font-size: 14px; background: #ffe4e6; padding: 10px; border-radius: 5px; font-family: monospace;'>" . htmlspecialchars($e->getMessage()) . "</p>
-        <p><strong>Database Credentials Loaded From:</strong></p>
+        <p><strong>Database Credentials Loaded:</strong></p>
         <ul style='font-size: 13px; line-height: 1.6;'>
             <li>Host: <code>" . htmlspecialchars(DB_HOST) . "</code></li>
             <li>User: <code>" . htmlspecialchars(DB_USER) . "</code></li>
             <li>Database: <code>" . htmlspecialchars(DB_NAME) . "</code></li>
+            <li>Password: <code>" . (DB_PASS !== '' ? 'Provided' : 'Empty') . "</code></li>
         </ul>
-        <p style='font-size: 13px; color: #64748b;'>You can provide your credentials in a <code>.env</code> file or <code>config.production.php</code> (ignored by Git for safety).</p>
     </div>");
 }
