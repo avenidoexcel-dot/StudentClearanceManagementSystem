@@ -665,16 +665,84 @@ textarea.form-control {
 }
 
 /* ==============================================================================
-   RESPONSIVE
+   RESPONSIVE DESIGN (MOBILE & TABLET)
 ============================================================================== */
 @media (max-width: 900px) {
   .sidebar {
     transform: translateX(-100%);
+    width: 260px;
   }
+  
   .sidebar.mobile-open {
     transform: translateX(0);
   }
+
   .main-content {
     margin-left: 0;
+  }
+
+  #mobileSidebarToggle {
+    display: inline-flex !important;
+  }
+
+  .topbar {
+    padding: 12px 18px;
+  }
+
+  .content-body {
+    padding: 18px 14px;
+  }
+
+  /* Stack 2-column admin layouts on tablets and phones */
+  div[style*="grid-template-columns: 2fr 1fr"],
+  div[style*="grid-template-columns: 1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  .stat-grid {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+  }
+
+  .stat-card {
+    padding: 14px;
+    gap: 12px;
+  }
+
+  .stat-val {
+    font-size: 22px;
+  }
+
+  .card {
+    padding: 18px 14px;
+    margin-bottom: 18px;
+  }
+
+  .auth-card {
+    padding: 24px 18px;
+  }
+
+  .student-info-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .signature-grid {
+    grid-template-columns: 1fr !important;
+    gap: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .stat-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .topbar-actions .badge {
+    display: none;
+  }
+
+  .btn {
+    padding: 8px 14px;
+    font-size: 13px;
   }
 }
