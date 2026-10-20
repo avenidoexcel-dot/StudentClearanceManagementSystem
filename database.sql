@@ -1,8 +1,6 @@
 -- Student Clearance Management System Database Schema
 -- Compatible with MySQL 5.7+ / MariaDB 10+ (XAMPP and InfinityFree)
 
-CREATE DATABASE IF NOT EXISTS `clearance_db` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE `clearance_db`;
 
 -- Drop existing tables if re-importing
 SET FOREIGN_KEY_CHECKS = 0;

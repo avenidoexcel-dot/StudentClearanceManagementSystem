@@ -62,13 +62,13 @@ $is_local  = in_array($http_host, ['localhost', '127.0.0.1', '::1'])
 // Host
 if (!defined('DB_HOST')) {
     $envHost = getenv('DB_HOST') ?: ($_ENV['DB_HOST'] ?? ($_SERVER['DB_HOST'] ?? ''));
-    define('DB_HOST', $envHost ?: ($is_local ? 'localhost' : 'localhost'));
+    define('DB_HOST', $envHost ?: ($is_local ? 'localhost' : 'sql200.byetcluster.com'));
 }
 
 // User
 if (!defined('DB_USER')) {
     $envUser = getenv('DB_USER') ?: ($_ENV['DB_USER'] ?? ($_SERVER['DB_USER'] ?? ''));
-    define('DB_USER', $envUser ?: ($is_local ? 'root' : 'root'));
+    define('DB_USER', $envUser ?: ($is_local ? 'root' : 'if0_43197826'));
 }
 
 // Password
@@ -80,7 +80,7 @@ if (!defined('DB_PASS')) {
 // Database Name
 if (!defined('DB_NAME')) {
     $envName = getenv('DB_NAME') ?: ($_ENV['DB_NAME'] ?? ($_SERVER['DB_NAME'] ?? ''));
-    define('DB_NAME', $envName ?: ($is_local ? 'clearance_db' : 'clearance_db'));
+    define('DB_NAME', $envName ?: ($is_local ? 'clearance_db' : 'if0_43197826_clearance'));
 }
 
 // ==============================================================================
