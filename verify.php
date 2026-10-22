@@ -31,7 +31,7 @@ include __DIR__ . '/includes/navbar.php';
 <div style="max-width: 700px; margin: 0 auto;">
     <!-- Verification Search Box -->
     <div class="card" style="text-align: center; padding: 36px 24px;">
-        <div style="width: 56px; height: 56px; background: #e0e7ff; color: #4338ca; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 14px;">
+        <div style="width: 56px; height: 56px; background: rgba(99, 102, 241, 0.15); color: #4338ca; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 14px; border: 1px solid rgba(99, 102, 241, 0.3); box-shadow: 0 4px 14px rgba(99, 102, 241, 0.25);">
             <i class="fa-solid fa-shield-halved"></i>
         </div>
         <h3 style="font-size: 22px; margin-bottom: 6px;">Certificate Verification</h3>

@@ -145,11 +145,11 @@ include __DIR__ . '/../includes/navbar.php';
                         These compliance guidelines and requirements are shown directly to students on their clearance dashboard:
                     </p>
                     <?php if (!empty($currentSubject['clearance_requirements'])): ?>
-                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 18px; font-size: 13px; line-height: 1.7; color: #1e293b; white-space: pre-line;">
+                        <div style="background: rgba(248, 250, 252, 0.65); border: 1px solid rgba(226, 232, 240, 0.75); border-radius: 8px; padding: 14px 18px; font-size: 13px; line-height: 1.7; color: #1e293b; white-space: pre-line;">
                             <?= e($currentSubject['clearance_requirements']) ?>
                         </div>
                     <?php else: ?>
-                        <div style="background: #fffbeb; border: 1px dashed #f59e0b; border-radius: 8px; padding: 12px 16px; font-size: 13px; color: #b45309; display: flex; align-items: center; gap: 10px;">
+                        <div style="background: rgba(255, 251, 235, 0.7); border: 1px dashed rgba(245, 158, 11, 0.6); border-radius: 8px; padding: 12px 16px; font-size: 13px; color: #b45309; display: flex; align-items: center; gap: 10px;">
                             <i class="fa-solid fa-circle-info" style="font-size: 16px;"></i>
                             <span>No clearance requirements set yet. Students will only see standard clearance pending. Click <strong>Set Requirements</strong> to specify requirements for this subject.</span>
                         </div>

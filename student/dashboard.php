@@ -98,7 +98,7 @@ include __DIR__ . '/../includes/navbar.php';
 
 <?php elseif (!$clearanceRequest): ?>
     <!-- Notice to Initiate Clearance Request -->
-    <div class="card" style="padding: 36px; border: 2px dashed #818cf8; background: #eef2ff;">
+    <div class="card" style="padding: 36px; border: 2px dashed rgba(99, 102, 241, 0.45); background: rgba(238, 242, 255, 0.7); backdrop-filter: blur(12px);">
         <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
             <div>
                 <span class="badge badge-primary" style="margin-bottom: 10px;">
@@ -173,7 +173,7 @@ include __DIR__ . '/../includes/navbar.php';
                     <?= render_status_badge($clearanceRequest['overall_status']) ?>
                 </div>
                 <p style="font-size: 13px; color: var(--text-muted);">
-                    Clearance Tracking Code: <code style="background: #f1f5f9; padding: 3px 8px; border-radius: 4px; font-weight: 700; color: #4338ca;"><?= e($clearanceRequest['clearance_code']) ?></code>
+                    Clearance Tracking Code: <code style="background: rgba(255, 255, 255, 0.85); padding: 3px 8px; border-radius: 4px; font-weight: 700; color: #4338ca; border: 1px solid rgba(203, 213, 225, 0.6);"><?= e($clearanceRequest['clearance_code']) ?></code>
                     | Submitted on <?= format_datetime($clearanceRequest['created_at']) ?>
                 </p>
             </div>
@@ -372,7 +372,7 @@ include __DIR__ . '/../includes/navbar.php';
         </div>
 
         <div class="modal-body">
-            <div style="background: #eef2ff; border: 1px solid #c7d2fe; border-radius: var(--radius-md); padding: 12px 16px; margin-bottom: 16px; font-size: 13px; color: #3730a3; display: flex; align-items: flex-start; gap: 10px;">
+            <div style="background: rgba(238, 242, 255, 0.75); border: 1px solid rgba(199, 210, 254, 0.7); border-radius: var(--radius-md); padding: 12px 16px; margin-bottom: 16px; font-size: 13px; color: #3730a3; display: flex; align-items: flex-start; gap: 10px;">
                 <i class="fa-solid fa-circle-info" style="font-size: 16px; margin-top: 2px;"></i>
                 <div>
                     Please ensure you have fulfilled all items listed below before requesting clearance sign-off from your instructor.
@@ -380,7 +380,7 @@ include __DIR__ . '/../includes/navbar.php';
             </div>
 
             <label class="form-label" style="font-weight: 700; color: #1e293b;">Required Submissions & Compliance Checklist:</label>
-            <div id="modalRequirementsContent" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: var(--radius-md); padding: 16px; font-size: 13px; line-height: 1.7; color: #1e293b; white-space: pre-line; max-height: 350px; overflow-y: auto;">
+            <div id="modalRequirementsContent" style="background: rgba(248, 250, 252, 0.7); border: 1px solid rgba(226, 232, 240, 0.75); border-radius: var(--radius-md); padding: 16px; font-size: 13px; line-height: 1.7; color: #1e293b; white-space: pre-line; max-height: 350px; overflow-y: auto;">
             </div>
         </div>
 

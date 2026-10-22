@@ -84,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/style.css">
 </head>
-<body style="background: radial-gradient(circle at top right, #e0e7ff 0%, #f8fafc 60%);">
+<body class="auth-page">
 
 <div class="auth-wrapper">
     <div class="auth-card">
