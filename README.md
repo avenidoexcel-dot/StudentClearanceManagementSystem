@@ -19,12 +19,14 @@ A comprehensive, dual-level academic clearance management platform designed for 
 ### 2. Student Portal
 - Real-time progress bar (e.g., *7 of 9 requirements cleared — 78%*).
 - Submit clearance requests for open terms with one click.
+- **View Subject Clearance Requirements**: Interactive modal checklists showing specific course requirements posted by each instructor.
 - Upload proof/receipts (JPG, PNG, PDF) for specific departments (e.g. Cashier).
 - Clear deficiency notices with actionable feedback from instructors/signatories.
 - Automatic unlocking of the **Printable Official Clearance Certificate** with verification code once 100% cleared.
 
 ### 3. Faculty Instructor Portal
 - View assigned classes and enrolled students.
+- **Publish Subject Clearance Requirements**: Create and edit custom checklists/instructions for enrolled students (e.g. machine problems, final project code, equipment return).
 - Single-click approval or "Flag Deficiency" with specific remarks.
 - "Approve All Pending" batch action for fast clearance.
 

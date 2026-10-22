@@ -50,7 +50,7 @@ include __DIR__ . '/../includes/header.php';
 include __DIR__ . '/../includes/navbar.php';
 ?>
 
-<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
+<div class="grid-2-1">
     <!-- Departments Table -->
     <div class="card">
         <div class="card-header">

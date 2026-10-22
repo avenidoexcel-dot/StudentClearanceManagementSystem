@@ -96,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php endif; ?>
 
         <form action="" method="POST">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="form-row-2">
                 <div class="form-group">
                     <label class="form-label" for="first_name">First Name *</label>
                     <input type="text" name="first_name" id="first_name" class="form-control" required value="<?= e($_POST['first_name'] ?? '') ?>" placeholder="e.g. Juan">
@@ -107,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="form-row-2">
                 <div class="form-group">
                     <label class="form-label" for="student_id">Student ID / Number *</label>
                     <input type="text" name="student_id" id="student_id" class="form-control" required value="<?= e($_POST['student_id'] ?? '') ?>" placeholder="e.g. 2026-0123">
@@ -118,7 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 16px;">
+            <div class="form-row-3">
                 <div class="form-group">
                     <label class="form-label" for="course">Program / Course *</label>
                     <select name="course" id="course" class="form-control" required>
@@ -152,7 +152,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="text" name="username" id="username" class="form-control" required value="<?= e($_POST['username'] ?? '') ?>" placeholder="Choose a username">
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="form-row-2">
                 <div class="form-group">
                     <label class="form-label" for="password">Password (min 6 chars) *</label>
                     <input type="password" name="password" id="password" class="form-control" required placeholder="••••••••">

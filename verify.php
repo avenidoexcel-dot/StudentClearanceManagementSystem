@@ -39,8 +39,8 @@ include __DIR__ . '/includes/navbar.php';
             Enter the unique clearance tracking code printed on the certificate to check its official institutional validity.
         </p>
 
-        <form action="" method="GET" style="display: flex; gap: 10px; max-width: 460px; margin: 0 auto;">
-            <input type="text" name="code" class="form-control" required placeholder="e.g. CLR-2026-A1B2C3D4" value="<?= e($code) ?>" style="font-family: monospace; text-transform: uppercase;">
+        <form action="" method="GET" class="verify-form" style="display: flex; gap: 10px; max-width: 460px; margin: 0 auto; flex-wrap: wrap;">
+            <input type="text" name="code" class="form-control" required placeholder="e.g. CLR-2026-A1B2C3D4" value="<?= e($code) ?>" style="font-family: monospace; text-transform: uppercase; flex: 1; min-width: 200px;">
             <button type="submit" class="btn btn-primary" style="padding: 10px 20px;">
                 <i class="fa-solid fa-magnifying-glass"></i> Verify
             </button>
@@ -65,7 +65,7 @@ include __DIR__ . '/includes/navbar.php';
                     </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; font-size: 14px;">
+                <div class="grid-2" style="font-size: 14px;">
                     <div><span style="color: #64748b;">Student Name:</span> <strong><?= e($record['first_name'] . ' ' . $record['last_name']) ?></strong></div>
                     <div><span style="color: #64748b;">Student ID:</span> <strong><?= e($record['student_id']) ?></strong></div>
                     <div><span style="color: #64748b;">Program & Year:</span> <strong><?= e($record['course'] . ' ' . $record['year_level'] . ' - ' . $record['section']) ?></strong></div>

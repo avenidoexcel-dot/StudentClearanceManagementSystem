@@ -88,3 +88,21 @@ function check_and_update_overall_clearance(PDO $pdo, int $request_id): string {
 
     return $newStatus;
 }
+
+/**
+ * Ensure clearance_requirements column exists on subjects table (Non-destructive self-migration)
+ */
+function ensure_clearance_requirements_column(PDO $pdo): void {
+    static $checked = false;
+    if ($checked) return;
+    $checked = true;
+    try {
+        $stmt = $pdo->query("SHOW COLUMNS FROM `subjects` LIKE 'clearance_requirements'");
+        if (!$stmt || $stmt->rowCount() === 0) {
+            $pdo->exec("ALTER TABLE `subjects` ADD COLUMN `clearance_requirements` TEXT NULL AFTER `name`");
+        }
+    } catch (\Throwable $e) {
+        // Silently proceed if table does not exist yet or ALTER fails
+    }
+}
+

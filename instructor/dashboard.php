@@ -10,6 +10,9 @@ $user = current_user();
 $periodStmt = $pdo->query("SELECT * FROM clearance_periods WHERE is_active = 1 LIMIT 1");
 $activePeriod = $periodStmt->fetch();
 
+// Ensure requirements column exists
+ensure_clearance_requirements_column($pdo);
+
 // 2. Fetch instructor's subjects
 $subjects = [];
 $studentsList = [];
@@ -126,6 +129,40 @@ include __DIR__ . '/../includes/navbar.php';
                 <div>
                     <div class="stat-val"><?= (int)$currentSubject['deficient_count'] ?></div>
                     <div class="stat-label">With Deficiencies</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Clearance Requirements Card for This Subject -->
+        <div class="card" style="border-left: 5px solid var(--primary); margin-bottom: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px;">
+                <div style="flex: 1; min-width: 280px;">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                        <span class="badge badge-primary"><i class="fa-solid fa-clipboard-list"></i> Clearance Requirements</span>
+                        <strong style="font-size: 14px; color: #334155;"><?= e($currentSubject['code']) ?> — <?= e($currentSubject['name']) ?></strong>
+                    </div>
+                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">
+                        These compliance guidelines and requirements are shown directly to students on their clearance dashboard:
+                    </p>
+                    <?php if (!empty($currentSubject['clearance_requirements'])): ?>
+                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 18px; font-size: 13px; line-height: 1.7; color: #1e293b; white-space: pre-line;">
+                            <?= e($currentSubject['clearance_requirements']) ?>
+                        </div>
+                    <?php else: ?>
+                        <div style="background: #fffbeb; border: 1px dashed #f59e0b; border-radius: 8px; padding: 12px 16px; font-size: 13px; color: #b45309; display: flex; align-items: center; gap: 10px;">
+                            <i class="fa-solid fa-circle-info" style="font-size: 16px;"></i>
+                            <span>No clearance requirements set yet. Students will only see standard clearance pending. Click <strong>Set Requirements</strong> to specify requirements for this subject.</span>
+                        </div>
+                    <?php endif; ?>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-outline" data-modal-target="#editRequirementsModal"
+                            data-subject-id="<?= $currentSubject['id'] ?>"
+                            data-subject-code="<?= e($currentSubject['code']) ?>"
+                            data-subject-name="<?= e($currentSubject['name']) ?>"
+                            data-current-requirements="<?= e($currentSubject['clearance_requirements'] ?? '') ?>">
+                        <i class="fa-solid fa-pen-to-square"></i> <?= !empty($currentSubject['clearance_requirements']) ? 'Edit Requirements' : 'Set Requirements' ?>
+                    </button>
                 </div>
             </div>
         </div>
@@ -267,6 +304,45 @@ include __DIR__ . '/../includes/navbar.php';
     </div>
 </div>
 
+<!-- Edit Subject Clearance Requirements Modal -->
+<div class="modal-overlay" id="editRequirementsModal">
+    <div class="modal-container" style="max-width: 600px;">
+        <form action="update_status.php" method="POST">
+            <input type="hidden" name="action" value="update_requirements">
+            <input type="hidden" name="subject_id" id="reqSubjectId" value="<?= $currentSubject ? $currentSubject['id'] : '' ?>">
+
+            <div class="modal-header">
+                <h3 style="font-size: 16px; font-weight: 700;">
+                    <i class="fa-solid fa-clipboard-check" style="color: var(--primary);"></i>
+                    Set Clearance Requirements for <span id="reqSubjectCode" style="color: var(--primary);"><?= $currentSubject ? e($currentSubject['code']) : '' ?></span>
+                </h3>
+                <button type="button" data-modal-close class="btn btn-outline btn-sm" style="border: none;">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label" for="clearanceRequirementsText">Clearance Criteria & Requirements for Students *</label>
+                    <textarea name="clearance_requirements" id="clearanceRequirementsText" class="form-control" rows="6" placeholder="List items students must accomplish before you sign their clearance, for example:
+1. Complete all laboratory machine problems #1 to #5
+2. Submit final Capstone project code and documentation
+3. Return all borrowed equipment and sensor kits
+4. Settle laboratory breakage dues (if any)"><?= $currentSubject ? e($currentSubject['clearance_requirements'] ?? '') : '' ?></textarea>
+                    <small style="font-size: 12px; color: var(--text-muted); margin-top: 6px; display: block;">
+                        <i class="fa-solid fa-circle-info"></i> Students enrolled in this course will see this checklist directly on their clearance dashboard.
+                    </small>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" data-modal-close class="btn btn-outline">Cancel</button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa-solid fa-floppy-disk"></i> Save Requirements
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     // Fill specific modal fields when clicking deficient button
@@ -277,6 +353,16 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('modalSubjectId').value = btn.dataset.subjectId;
             document.getElementById('modalStudentName').innerText = btn.dataset.studentName;
             document.getElementById('modalRemarks').value = btn.dataset.currentRemarks || '';
+        });
+    });
+
+    // Fill edit requirements modal
+    const reqButtons = document.querySelectorAll('[data-modal-target="#editRequirementsModal"]');
+    reqButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.getElementById('reqSubjectId').value = btn.dataset.subjectId;
+            document.getElementById('reqSubjectCode').innerText = btn.dataset.subjectCode;
+            document.getElementById('clearanceRequirementsText').value = btn.dataset.currentRequirements || '';
         });
     });
 });

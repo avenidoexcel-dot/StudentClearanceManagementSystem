@@ -87,9 +87,32 @@ a:hover {
 /* ==============================================================================
    LAYOUT
 ============================================================================== */
+body.sidebar-open {
+  overflow: hidden;
+}
+
 .app-wrapper {
   display: flex;
   min-height: 100vh;
+  position: relative;
+}
+
+/* Sidebar Dimmer Backdrop for Mobile Drawer */
+.sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 998;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar-backdrop.active {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .sidebar {
@@ -104,15 +127,23 @@ a:hover {
   left: 0;
   z-index: 100;
   box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .sidebar-header {
-  padding: 24px;
+  padding: 20px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sidebar-brand {
   display: flex;
   align-items: center;
   gap: 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  min-width: 0;
 }
 
 .sidebar-logo-icon {
@@ -126,6 +157,7 @@ a:hover {
   justify-content: center;
   font-size: 20px;
   box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+  flex-shrink: 0;
 }
 
 .sidebar-title {
@@ -133,6 +165,7 @@ a:hover {
   font-weight: 700;
   letter-spacing: -0.3px;
   color: #fff;
+  white-space: nowrap;
 }
 
 .sidebar-subtitle {
@@ -140,10 +173,33 @@ a:hover {
   color: #94a3b8;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.sidebar-close-btn {
+  display: none;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #f1f5f9;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  cursor: pointer;
+  transition: var(--transition);
+  flex-shrink: 0;
+}
+
+.sidebar-close-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #ef4444;
 }
 
 .sidebar-nav {
-  padding: 20px 16px;
+  padding: 18px 14px;
   flex: 1;
   overflow-y: auto;
   display: flex;
@@ -176,6 +232,7 @@ a:hover {
   font-size: 16px;
   width: 20px;
   text-align: center;
+  flex-shrink: 0;
 }
 
 .nav-link:hover {
@@ -213,6 +270,7 @@ a:hover {
   justify-content: center;
   font-weight: 700;
   font-size: 14px;
+  flex-shrink: 0;
 }
 
 .user-meta-name {
@@ -237,39 +295,173 @@ a:hover {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  min-width: 0;
+  background-color: var(--bg-page);
 }
 
+/* Enhanced Sticky Topbar */
 .topbar {
-  background: var(--surface);
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
-  padding: 16px 32px;
+  padding: 14px 28px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 16px;
   position: sticky;
   top: 0;
   z-index: 90;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.03);
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  flex: 1;
+}
+
+.mobile-toggle-btn {
+  display: none;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-main);
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  cursor: pointer;
+  transition: var(--transition);
+  flex-shrink: 0;
+}
+
+.mobile-toggle-btn:hover {
+  background: var(--surface-secondary);
+  border-color: var(--primary-light);
+  color: var(--primary);
+}
+
+.topbar-brand-mobile {
+  display: none;
+  align-items: center;
+  gap: 8px;
+}
+
+.sidebar-logo-icon-sm {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #6366f1, #4338ca);
+  color: #fff;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  box-shadow: 0 2px 6px rgba(99, 102, 241, 0.3);
+}
+
+.topbar-brand-mobile .brand-text {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-main);
+  letter-spacing: -0.3px;
+}
+
+.topbar-title {
+  min-width: 0;
+  flex: 1;
 }
 
 .topbar-title h2 {
-  font-size: 20px;
+  font-size: clamp(16px, 2vw, 20px);
   font-weight: 700;
+  letter-spacing: -0.3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
 }
 
-.topbar-title p {
-  font-size: 13px;
+.topbar-subtitle {
+  font-size: 12.5px;
   color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+  margin-top: 2px;
 }
 
 .topbar-actions {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.topbar-user-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px 4px 5px;
+  background: var(--surface-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+}
+
+.topbar-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.topbar-user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.topbar-user-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-main);
+  max-width: 140px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.badge-sm {
+  padding: 2px 8px;
+  font-size: 11px;
+}
+
+.logout-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
 }
 
 .content-body {
-  padding: 32px;
+  padding: 30px 32px;
   flex: 1;
+  min-width: 0;
 }
 
 /* ==============================================================================
@@ -665,43 +857,233 @@ textarea.form-control {
 }
 
 /* ==============================================================================
-   RESPONSIVE DESIGN (MOBILE & TABLET)
+   GRID HELPERS
 ============================================================================== */
+.grid-2-1 {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.form-row-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.form-row-3 {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 16px;
+}
+
+.verify-form {
+  display: flex;
+  gap: 10px;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+/* ==============================================================================
+   CERTIFICATE COMPONENT SCREEN STYLES
+============================================================================== */
+.certificate-wrapper {
+  background: #ffffff;
+  border: 2px solid #cbd5e1;
+  border-radius: var(--radius-lg);
+  padding: 36px 40px;
+  max-width: 900px;
+  margin: 0 auto 30px auto;
+  box-shadow: var(--shadow-md);
+  position: relative;
+}
+
+.certificate-header {
+  text-align: center;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #4338ca;
+  margin-bottom: 24px;
+}
+
+.school-name {
+  font-size: 22px;
+  font-weight: 800;
+  color: #1e1b4b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.school-sub {
+  font-size: 13px;
+  color: #475569;
+}
+
+.certificate-title {
+  margin-top: 16px;
+  font-size: 20px;
+  font-weight: 800;
+  color: #4338ca;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.student-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px 24px;
+  background: #f8fafc;
+  padding: 16px 20px;
+  border-radius: var(--radius-md);
+  margin-bottom: 24px;
+  border: 1px solid #e2e8f0;
+}
+
+.info-item {
+  display: flex;
+  font-size: 14px;
+}
+
+.info-label {
+  font-weight: 700;
+  width: 130px;
+  color: #475569;
+  flex-shrink: 0;
+}
+
+.info-value {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.signature-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px 20px;
+  margin-top: 36px;
+}
+
+.signature-box {
+  text-align: center;
+  padding-top: 30px;
+  border-top: 1.5px solid #0f172a;
+}
+
+.signatory-name {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.signatory-title {
+  font-size: 11px;
+  color: #64748b;
+}
+
+.seal-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: 32px;
+  padding-top: 16px;
+  border-top: 1px dashed #cbd5e1;
+}
+
+.qr-placeholder {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.qr-box {
+  width: 64px;
+  height: 64px;
+  border: 2px dashed #94a3b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: #64748b;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+/* ==============================================================================
+   RESPONSIVE DESIGN (MOBILE, TABLET & DESKTOP)
+============================================================================== */
+@media (max-width: 1024px) {
+  .topbar {
+    padding: 14px 20px;
+  }
+  .content-body {
+    padding: 24px 20px;
+  }
+}
+
 @media (max-width: 900px) {
   .sidebar {
     transform: translateX(-100%);
-    width: 260px;
+    width: 280px;
+    max-width: 85vw;
+    z-index: 1000;
+    box-shadow: none;
   }
   
   .sidebar.mobile-open {
     transform: translateX(0);
+    box-shadow: 10px 0 35px rgba(0, 0, 0, 0.4);
+  }
+
+  .sidebar-close-btn {
+    display: inline-flex;
   }
 
   .main-content {
     margin-left: 0;
+    width: 100%;
+    min-width: 0;
   }
 
-  #mobileSidebarToggle {
+  .mobile-toggle-btn {
     display: inline-flex !important;
   }
 
   .topbar {
     padding: 12px 18px;
+    gap: 12px;
   }
 
   .content-body {
-    padding: 18px 14px;
+    padding: 20px 16px;
   }
 
-  /* Stack 2-column admin layouts on tablets and phones */
+  /* Automatically stack 2-column and 3-column grids on mobile/tablet */
+  .grid-2-1,
+  .grid-2,
+  .grid-3,
   div[style*="grid-template-columns: 2fr 1fr"],
-  div[style*="grid-template-columns: 1fr 1fr"] {
+  div[style*="grid-template-columns: 1fr 1fr"],
+  div[style*="grid-template-columns: repeat(2, 1fr)"] {
     grid-template-columns: 1fr !important;
+    gap: 16px !important;
   }
 
   .stat-grid {
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: 12px;
+    margin-bottom: 20px;
   }
 
   .stat-card {
@@ -709,40 +1091,229 @@ textarea.form-control {
     gap: 12px;
   }
 
+  .stat-icon {
+    width: 44px;
+    height: 44px;
+    font-size: 18px;
+  }
+
   .stat-val {
     font-size: 22px;
   }
 
+  .stat-label {
+    font-size: 12px;
+  }
+
   .card {
-    padding: 18px 14px;
+    padding: 20px 16px;
     margin-bottom: 18px;
+    border-radius: var(--radius-md);
+  }
+
+  .card-header {
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .card-title {
+    font-size: 16px;
+  }
+
+  .student-info-grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px;
+    padding: 14px;
+  }
+
+  .signature-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px;
+  }
+
+  .certificate-wrapper {
+    padding: 24px 18px;
+  }
+
+  .seal-box {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .seal-box > div:last-child {
+    text-align: left !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .topbar-subtitle {
+    display: none;
+  }
+
+  .topbar-user-name {
+    display: none;
+  }
+
+  .topbar-user-badge {
+    padding: 3px 6px;
+    gap: 6px;
+  }
+
+  .topbar-actions {
+    gap: 8px;
+  }
+
+  .topbar-title h2 {
+    font-size: 16px;
   }
 
   .auth-card {
     padding: 24px 18px;
   }
 
-  .student-info-grid {
+  /* Stack any 2-column form rows */
+  .form-row-2,
+  div[style*="grid-template-columns: 1fr 1fr"] {
     grid-template-columns: 1fr !important;
+    gap: 12px !important;
   }
 
-  .signature-grid {
-    grid-template-columns: 1fr !important;
-    gap: 18px;
+  /* Table search input expands nicely on mobile */
+  .card-header > div[style*="display: flex"] {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch !important;
+    gap: 10px;
+  }
+
+  .card-header input[data-table-search] {
+    width: 100% !important;
+  }
+
+  .card-header form {
+    width: 100%;
+  }
+
+  .card-header form button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Filter form responsive stacking */
+  .filter-form > div,
+  .card form[action=""][method="GET"] > div {
+    width: 100% !important;
+    min-width: 100% !important;
+  }
+
+  .filter-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .filter-actions .btn {
+    flex: 1;
+    min-width: 90px;
+    justify-content: center;
+  }
+
+  .modal-container {
+    max-width: 95vw;
+    margin: 10px;
   }
 }
 
 @media (max-width: 480px) {
-  .stat-grid {
-    grid-template-columns: 1fr;
+  .topbar {
+    padding: 10px 14px;
+    gap: 10px;
   }
 
-  .topbar-actions .badge {
+  .topbar-title h2 {
+    font-size: 15px;
+  }
+
+  .topbar-user-badge .badge {
     display: none;
   }
 
+  .logout-btn .logout-label {
+    display: none;
+  }
+
+  .logout-btn {
+    padding: 6px 10px;
+  }
+
+  .content-body {
+    padding: 14px 10px;
+  }
+
+  .stat-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .stat-card {
+    padding: 12px 10px;
+    gap: 8px;
+  }
+
+  .stat-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 15px;
+  }
+
+  .stat-val {
+    font-size: 18px;
+  }
+
+  .stat-label {
+    font-size: 11px;
+  }
+
   .btn {
-    padding: 8px 14px;
+    padding: 8px 12px;
     font-size: 13px;
+  }
+
+  .table th, .table td {
+    padding: 10px 8px;
+    font-size: 12px;
+  }
+
+  .school-name {
+    font-size: 16px;
+  }
+
+  .certificate-title {
+    font-size: 15px;
+  }
+
+  .info-item {
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .info-label {
+    width: 100%;
+    font-size: 12px;
+  }
+
+  .modal-header,
+  .modal-body,
+  .modal-footer {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 360px) {
+  .stat-grid {
+    grid-template-columns: 1fr;
   }
 }

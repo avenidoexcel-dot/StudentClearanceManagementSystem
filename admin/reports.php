@@ -74,7 +74,7 @@ include __DIR__ . '/../includes/navbar.php';
 
 <!-- Filter Bar -->
 <div class="card no-print" style="padding: 18px 24px;">
-    <form action="" method="GET" style="display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end;">
+    <form action="" method="GET" class="filter-form" style="display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end;">
         <div style="flex: 1; min-width: 200px;">
             <label class="form-label" style="font-size: 12px;">Clearance Period</label>
             <select name="period_id" class="form-control" onchange="this.form.submit()">
@@ -110,7 +110,7 @@ include __DIR__ . '/../includes/navbar.php';
             <input type="text" name="search" class="form-control" value="<?= e($search) ?>" placeholder="ID, name, or code...">
         </div>
 
-        <div>
+        <div class="filter-actions">
             <button type="submit" class="btn btn-primary"><i class="fa-solid fa-filter"></i> Filter</button>
             <a href="reports.php" class="btn btn-outline">Reset</a>
             <button type="button" onclick="window.print()" class="btn btn-outline">

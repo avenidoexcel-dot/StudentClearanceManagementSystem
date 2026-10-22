@@ -93,7 +93,7 @@ include __DIR__ . '/../includes/navbar.php';
 </div>
 
 <!-- Active Period & Quick Actions -->
-<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 24px;">
+<div class="grid-2-1">
     <!-- Active Period Card -->
     <div class="card" style="margin-bottom: 0;">
         <div class="card-header">

@@ -10,6 +10,9 @@ $user = current_user();
 $periodStmt = $pdo->query("SELECT * FROM clearance_periods WHERE is_active = 1 LIMIT 1");
 $activePeriod = $periodStmt->fetch();
 
+// Ensure requirements column exists
+ensure_clearance_requirements_column($pdo);
+
 // 2. Fetch student's clearance request for active period
 $clearanceRequest = null;
 $deptStatusList   = [];
@@ -50,8 +53,9 @@ if ($activePeriod) {
 
         // Fetch Subject Statuses
         $subjStmt = $pdo->prepare("
-            SELECT css.*, s.code AS subject_code, s.name AS subject_name,
-                   CONCAT(u.first_name, ' ', u.last_name) AS instructor_name
+            SELECT css.*, s.code AS subject_code, s.name AS subject_name, s.clearance_requirements,
+                   CONCAT(u.first_name, ' ', u.last_name) AS instructor_name,
+                   u.email AS instructor_email
             FROM clearance_subject_status css
             JOIN subjects s ON css.subject_id = s.id
             JOIN users u ON css.instructor_id = u.id
@@ -222,6 +226,7 @@ include __DIR__ . '/../includes/navbar.php';
                             <th>Subject Name</th>
                             <th>Assigned Instructor</th>
                             <th>Status</th>
+                            <th>Clearance Requirements</th>
                             <th>Remarks / Deficiencies</th>
                             <th>Date Signed</th>
                         </tr>
@@ -236,8 +241,27 @@ include __DIR__ . '/../includes/navbar.php';
                                         <i class="fa-regular fa-user" style="color: #94a3b8; font-size: 12px;"></i>
                                         <span><?= e($subj['instructor_name']) ?></span>
                                     </div>
+                                    <?php if (!empty($subj['instructor_email'])): ?>
+                                        <div style="font-size: 11px; color: var(--text-muted); margin-left: 20px;"><?= e($subj['instructor_email']) ?></div>
+                                    <?php endif; ?>
                                 </td>
                                 <td><?= render_status_badge($subj['status']) ?></td>
+                                <td>
+                                    <?php if (!empty($subj['clearance_requirements'])): ?>
+                                        <button type="button" class="btn btn-outline btn-sm view-req-btn"
+                                                data-modal-target="#viewSubjectReqModal"
+                                                data-subject-code="<?= e($subj['subject_code']) ?>"
+                                                data-subject-name="<?= e($subj['subject_name']) ?>"
+                                                data-instructor-name="<?= e($subj['instructor_name']) ?>"
+                                                data-requirements="<?= e($subj['clearance_requirements']) ?>">
+                                            <i class="fa-solid fa-clipboard-list" style="color: var(--primary);"></i> View Requirements
+                                        </button>
+                                    <?php else: ?>
+                                        <span style="font-size: 12px; color: #94a3b8;">
+                                            <i class="fa-regular fa-circle-check"></i> Standard Standing
+                                        </span>
+                                    <?php endif; ?>
+                                </td>
                                 <td>
                                     <?php if ($subj['status'] === 'deficient'): ?>
                                         <div style="color: var(--danger); font-size: 13px; font-weight: 500;">
@@ -330,5 +354,56 @@ include __DIR__ . '/../includes/navbar.php';
     </div>
 
 <?php endif; ?>
+
+<!-- Modal for Viewing Subject Clearance Requirements -->
+<div class="modal-overlay" id="viewSubjectReqModal">
+    <div class="modal-container" style="max-width: 600px;">
+        <div class="modal-header">
+            <div>
+                <h3 style="font-size: 16px; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 8px;">
+                    <i class="fa-solid fa-clipboard-check" style="color: var(--primary);"></i>
+                    <span>Clearance Requirements: <strong id="modalSubjectCode" style="color: var(--primary);"></strong></span>
+                </h3>
+                <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">
+                    <span id="modalSubjectName"></span> &bull; Instructor: <strong id="modalInstructorName"></strong>
+                </div>
+            </div>
+            <button type="button" data-modal-close class="btn btn-outline btn-sm" style="border: none;">&times;</button>
+        </div>
+
+        <div class="modal-body">
+            <div style="background: #eef2ff; border: 1px solid #c7d2fe; border-radius: var(--radius-md); padding: 12px 16px; margin-bottom: 16px; font-size: 13px; color: #3730a3; display: flex; align-items: flex-start; gap: 10px;">
+                <i class="fa-solid fa-circle-info" style="font-size: 16px; margin-top: 2px;"></i>
+                <div>
+                    Please ensure you have fulfilled all items listed below before requesting clearance sign-off from your instructor.
+                </div>
+            </div>
+
+            <label class="form-label" style="font-weight: 700; color: #1e293b;">Required Submissions & Compliance Checklist:</label>
+            <div id="modalRequirementsContent" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: var(--radius-md); padding: 16px; font-size: 13px; line-height: 1.7; color: #1e293b; white-space: pre-line; max-height: 350px; overflow-y: auto;">
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" data-modal-close class="btn btn-primary">
+                <i class="fa-solid fa-check"></i> Close
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const viewButtons = document.querySelectorAll('.view-req-btn');
+    viewButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.getElementById('modalSubjectCode').innerText = btn.dataset.subjectCode || '';
+            document.getElementById('modalSubjectName').innerText = btn.dataset.subjectName || '';
+            document.getElementById('modalInstructorName').innerText = btn.dataset.instructorName || '';
+            document.getElementById('modalRequirementsContent').innerText = btn.dataset.requirements || 'No specific requirements listed.';
+        });
+    });
+});
+</script>
 
 <?php include __DIR__ . '/../includes/footer.php'; ?>

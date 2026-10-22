@@ -15,21 +15,25 @@ foreach ($periods as $p) {
 // Fetch all instructors
 $instructors = $pdo->query("SELECT id, first_name, last_name, username FROM users WHERE role = 'instructor' AND status = 'active' ORDER BY last_name ASC")->fetchAll();
 
+// Ensure clearance_requirements column exists
+ensure_clearance_requirements_column($pdo);
+
 $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $code          = strtoupper(trim($_POST['code'] ?? ''));
-    $name          = trim($_POST['name'] ?? '');
-    $instructor_id = (int)($_POST['instructor_id'] ?? 0);
-    $period_id     = (int)($_POST['period_id'] ?? 0);
+    $code                   = strtoupper(trim($_POST['code'] ?? ''));
+    $name                   = trim($_POST['name'] ?? '');
+    $instructor_id          = (int)($_POST['instructor_id'] ?? 0);
+    $period_id              = (int)($_POST['period_id'] ?? 0);
+    $clearance_requirements = trim($_POST['clearance_requirements'] ?? '');
 
     if (empty($code) || empty($name) || !$instructor_id || !$period_id) {
         $error = 'Please fill out all subject details and assign an instructor.';
     } else {
         $stmt = $pdo->prepare("
-            INSERT INTO subjects (code, name, instructor_id, period_id)
-            VALUES (?, ?, ?, ?)
+            INSERT INTO subjects (code, name, clearance_requirements, instructor_id, period_id)
+            VALUES (?, ?, ?, ?, ?)
         ");
-        $stmt->execute([$code, $name, $instructor_id, $period_id]);
+        $stmt->execute([$code, $name, $clearance_requirements !== '' ? $clearance_requirements : null, $instructor_id, $period_id]);
         set_flash('success', "Subject '{$code}' created and assigned to instructor.");
         header('Location: ' . BASE_URL . 'admin/subjects.php');
         exit;
@@ -56,7 +60,7 @@ include __DIR__ . '/../includes/header.php';
 include __DIR__ . '/../includes/navbar.php';
 ?>
 
-<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
+<div class="grid-2-1">
     <!-- Subjects List -->
     <div class="card">
         <div class="card-header">
@@ -75,11 +79,12 @@ include __DIR__ . '/../includes/navbar.php';
                         <th>Assigned Instructor</th>
                         <th>Term</th>
                         <th>Students</th>
+                        <th>Requirements</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php if (empty($subjects)): ?>
-                        <tr><td colspan="5" style="text-align: center; color: var(--text-muted);">No subjects added yet.</td></tr>
+                        <tr><td colspan="6" style="text-align: center; color: var(--text-muted);">No subjects added yet.</td></tr>
                     <?php else: ?>
                         <?php foreach ($subjects as $s): ?>
                             <tr>
@@ -91,6 +96,15 @@ include __DIR__ . '/../includes/navbar.php';
                                 </td>
                                 <td><span style="font-size: 12px; color: var(--text-muted);"><?= e($s['period_name']) ?></span></td>
                                 <td><span class="badge badge-primary"><?= (int)$s['student_count'] ?></span></td>
+                                <td>
+                                    <?php if (!empty($s['clearance_requirements'])): ?>
+                                        <span class="badge badge-success" title="<?= e($s['clearance_requirements']) ?>">
+                                            <i class="fa-solid fa-clipboard-check"></i> Configured
+                                        </span>
+                                    <?php else: ?>
+                                        <span style="font-size: 11px; color: var(--text-muted);">None</span>
+                                    <?php endif; ?>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                     <?php endif; ?>
@@ -150,6 +164,12 @@ include __DIR__ . '/../includes/navbar.php';
                 <?php if (empty($instructors)): ?>
                     <small style="color: var(--danger); font-size: 11px;">No instructor accounts found. Create one under Users first.</small>
                 <?php endif; ?>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="clearance_requirements">Clearance Requirements / Checklist (Optional)</label>
+                <textarea name="clearance_requirements" id="clearance_requirements" class="form-control" rows="3" placeholder="e.g. 1. Submit final project code, 2. Return lab kits"></textarea>
+                <small style="font-size: 11px; color: var(--text-muted);">Assigned instructors can also view and edit this from their portal.</small>
             </div>
 
             <button type="submit" class="btn btn-primary" style="width: 100%;">

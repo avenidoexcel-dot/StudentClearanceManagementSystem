@@ -61,6 +61,7 @@ CREATE TABLE `subjects` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `code` VARCHAR(30) NOT NULL,
   `name` VARCHAR(100) NOT NULL,
+  `clearance_requirements` TEXT NULL,
   `instructor_id` INT NOT NULL,
   `period_id` INT NOT NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -176,10 +177,10 @@ INSERT INTO `clearance_periods` (`id`, `name`, `academic_year`, `semester`, `sta
 (1, '1st Semester Clearance 2026-2027', '2026-2027', '1st Semester', '2026-10-01', '2026-11-15', 1);
 
 -- Subjects for this Period
-INSERT INTO `subjects` (`id`, `code`, `name`, `instructor_id`, `period_id`) VALUES
-(1, 'IT311', 'Web Systems & Technologies 2', 8, 1),
-(2, 'IT312', 'Information Assurance & Security', 9, 1),
-(3, 'IT313', 'Database Administration', 10, 1);
+INSERT INTO `subjects` (`id`, `code`, `name`, `clearance_requirements`, `instructor_id`, `period_id`) VALUES
+(1, 'IT311', 'Web Systems & Technologies 2', '1. Complete all laboratory machine problems.\n2. Submit final Capstone / Web project source code repository.\n3. Return all borrowed development kits & equipment.', 8, 1),
+(2, 'IT312', 'Information Assurance & Security', '1. Submit Security Audit & Vulnerability Assessment Report.\n2. Pass Final Lab Defense.', 9, 1),
+(3, 'IT313', 'Database Administration', '1. Final Database Backup & Recovery Practical Exam.\n2. Submit normalized database project documentation and SQL dump.', 10, 1);
 
 -- Enrolled Subjects for student1
 INSERT INTO `student_subjects` (`student_id`, `subject_id`, `period_id`) VALUES

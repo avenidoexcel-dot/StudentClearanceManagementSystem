@@ -61,31 +61,83 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 3. Mobile Sidebar Toggle
+    // 3. Mobile Sidebar Drawer Controls & Backdrop
     const mobileToggle = document.getElementById('mobileSidebarToggle');
+    const mobileClose = document.getElementById('mobileSidebarClose');
+    const backdrop = document.getElementById('sidebarBackdrop');
     const sidebar = document.querySelector('.sidebar');
-    if (mobileToggle && sidebar) {
+
+    function openMobileSidebar() {
+        if (!sidebar) return;
+        sidebar.classList.add('mobile-open');
+        if (backdrop) backdrop.classList.add('active');
+        document.body.classList.add('sidebar-open');
+    }
+
+    function closeMobileSidebar() {
+        if (!sidebar) return;
+        sidebar.classList.remove('mobile-open');
+        if (backdrop) backdrop.classList.remove('active');
+        document.body.classList.remove('sidebar-open');
+    }
+
+    if (mobileToggle) {
         mobileToggle.addEventListener('click', (e) => {
             e.stopPropagation();
-            sidebar.classList.toggle('mobile-open');
-        });
-
-        document.addEventListener('click', (e) => {
-            if (window.innerWidth <= 900 && 
-                sidebar.classList.contains('mobile-open') && 
-                !sidebar.contains(e.target) && 
-                !mobileToggle.contains(e.target)) {
-                sidebar.classList.remove('mobile-open');
+            if (sidebar && sidebar.classList.contains('mobile-open')) {
+                closeMobileSidebar();
+            } else {
+                openMobileSidebar();
             }
         });
     }
+
+    if (mobileClose) {
+        mobileClose.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeMobileSidebar();
+        });
+    }
+
+    if (backdrop) {
+        backdrop.addEventListener('click', () => {
+            closeMobileSidebar();
+        });
+    }
+
+    // Close on navigation click when on mobile screen
+    const navLinks = document.querySelectorAll('.sidebar-nav .nav-link');
+    navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            if (window.innerWidth <= 900) {
+                closeMobileSidebar();
+            }
+        });
+    });
+
+    // Close on pressing Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeMobileSidebar();
+            const activeModal = document.querySelector('.modal-overlay.active');
+            if (activeModal) activeModal.classList.remove('active');
+        }
+    });
+
+    // Reset mobile sidebar state if resized to desktop screen
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 900 && sidebar && sidebar.classList.contains('mobile-open')) {
+            closeMobileSidebar();
+        }
+    });
 
     // 4. Auto-dismiss alerts after 5 seconds
     const autoAlerts = document.querySelectorAll('.alert-auto-dismiss');
     autoAlerts.forEach(alert => {
         setTimeout(() => {
-            alert.style.transition = 'opacity 0.4s ease';
+            alert.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
             alert.style.opacity = '0';
+            alert.style.transform = 'translateY(-6px)';
             setTimeout(() => alert.remove(), 400);
         }, 5000);
     });

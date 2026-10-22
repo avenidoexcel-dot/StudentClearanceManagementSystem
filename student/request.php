@@ -108,7 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // Fetch preview of requirements to show student what will be generated
 $deptPreview = $pdo->query("SELECT name, code FROM departments WHERE is_active = 1 ORDER BY id ASC")->fetchAll();
 $subjPreview = $pdo->prepare("
-    SELECT s.code, s.name, CONCAT(u.first_name, ' ', u.last_name) AS instructor_name
+    SELECT s.code, s.name, s.clearance_requirements, CONCAT(u.first_name, ' ', u.last_name) AS instructor_name
     FROM subjects s
     JOIN users u ON s.instructor_id = u.id
     WHERE s.period_id = ?
@@ -158,7 +158,7 @@ include __DIR__ . '/../includes/navbar.php';
             <h4 style="font-size: 15px; margin-bottom: 12px; color: #334155;">
                 <i class="fa-solid fa-list-check"></i> Signatories Checklist to be Assigned:
             </h4>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div class="grid-2">
                 <!-- Departments List -->
                 <div style="border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px;">
                     <div style="font-weight: 700; font-size: 13px; color: #4338ca; margin-bottom: 8px;">
@@ -178,9 +178,18 @@ include __DIR__ . '/../includes/navbar.php';
                     </div>
                     <ul style="font-size: 13px; list-style-type: none; padding-left: 0; line-height: 1.8;">
                         <?php foreach ($subjectsList as $s): ?>
-                            <li>
-                                <i class="fa-regular fa-circle-check" style="color: #10b981; font-size: 11px;"></i> 
-                                <strong><?= e($s['code']) ?></strong> - <?= e($s['instructor_name']) ?>
+                            <li style="margin-bottom: 6px;">
+                                <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px;">
+                                    <div>
+                                        <i class="fa-regular fa-circle-check" style="color: #10b981; font-size: 11px;"></i> 
+                                        <strong><?= e($s['code']) ?></strong> - <?= e($s['instructor_name']) ?>
+                                    </div>
+                                    <?php if (!empty($s['clearance_requirements'])): ?>
+                                        <span class="badge" style="background: #e0f2fe; color: #0369a1; font-size: 10px; padding: 2px 6px;">
+                                            <i class="fa-solid fa-list-check"></i> Has Requirements
+                                        </span>
+                                    <?php endif; ?>
+                                </div>
                             </li>
                         <?php endforeach; ?>
                     </ul>

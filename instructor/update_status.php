@@ -69,6 +69,30 @@ if ($action === 'single_update') {
     } else {
         set_flash('info', 'No pending students found to batch approve.');
     }
+} elseif ($action === 'update_requirements') {
+    ensure_clearance_requirements_column($pdo);
+    $requirements = trim($_POST['clearance_requirements'] ?? '');
+
+    // Verify ownership: instructor must be the instructor of this subject
+    $stmt = $pdo->prepare("
+        SELECT id, code FROM subjects
+        WHERE id = ? AND instructor_id = ?
+    ");
+    $stmt->execute([$subjectId, $user['id']]);
+    $subject = $stmt->fetch();
+
+    if ($subject) {
+        $updateStmt = $pdo->prepare("
+            UPDATE subjects
+            SET clearance_requirements = ?
+            WHERE id = ? AND instructor_id = ?
+        ");
+        $updateStmt->execute([$requirements !== '' ? $requirements : null, $subjectId, $user['id']]);
+
+        set_flash('success', "Clearance requirements updated for " . $subject['code'] . ".");
+    } else {
+        set_flash('error', 'Unauthorized or subject not found.');
+    }
 }
 
 header('Location: ' . BASE_URL . 'instructor/dashboard.php?subject_id=' . $subjectId);

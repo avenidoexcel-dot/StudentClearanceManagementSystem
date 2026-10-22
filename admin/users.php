@@ -95,7 +95,7 @@ include __DIR__ . '/../includes/navbar.php';
     <a href="users.php?role=admin" class="btn btn-sm <?= $roleFilter === 'admin' ? 'btn-primary' : 'btn-outline' ?>"><i class="fa-solid fa-shield-halved"></i> Administrators</a>
 </div>
 
-<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
+<div class="grid-2-1">
     <!-- Users List Table -->
     <div class="card">
         <div class="card-header" style="flex-wrap: wrap; gap: 10px;">

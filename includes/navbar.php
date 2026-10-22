@@ -4,16 +4,24 @@ $current_page = basename($_SERVER['PHP_SELF']);
 $flash = get_flash();
 ?>
 <div class="app-wrapper">
+    <!-- Sidebar Dimmer Backdrop for Mobile Devices -->
+    <div id="sidebarBackdrop" class="sidebar-backdrop no-print"></div>
+
     <!-- Sidebar Navigation -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="appSidebar">
         <div class="sidebar-header">
-            <div class="sidebar-logo-icon">
-                <i class="fa-solid fa-graduation-cap"></i>
+            <div class="sidebar-brand">
+                <div class="sidebar-logo-icon">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <div>
+                    <div class="sidebar-title">ClearanceHub</div>
+                    <div class="sidebar-subtitle">Student Portal</div>
+                </div>
             </div>
-            <div>
-                <div class="sidebar-title">ClearanceHub</div>
-                <div class="sidebar-subtitle">Student Portal</div>
-            </div>
+            <button id="mobileSidebarClose" class="sidebar-close-btn no-print" type="button" aria-label="Close Navigation">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
         </div>
 
         <nav class="sidebar-nav">
@@ -103,23 +111,36 @@ $flash = get_flash();
     <!-- Main Page Content Area -->
     <div class="main-content">
         <header class="topbar">
-            <div style="display: flex; align-items: center; gap: 14px;">
-                <button id="mobileSidebarToggle" class="btn btn-outline btn-sm no-print" style="display: none;">
-                    <i class="fa-solid fa-bars"></i>
+            <div class="topbar-left">
+                <button id="mobileSidebarToggle" class="mobile-toggle-btn no-print" type="button" aria-label="Toggle navigation menu">
+                    <i class="fa-solid fa-bars-staggered"></i>
                 </button>
+                <div class="topbar-brand-mobile">
+                    <div class="sidebar-logo-icon-sm">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <span class="brand-text">ClearanceHub</span>
+                </div>
                 <div class="topbar-title">
                     <h2><?= e($page_title) ?></h2>
-                    <p><?= e($page_subtitle ?? 'Student Clearance Management System') ?></p>
+                    <?php if (!empty($page_subtitle)): ?>
+                        <p class="topbar-subtitle"><?= e($page_subtitle) ?></p>
+                    <?php endif; ?>
                 </div>
             </div>
             
             <div class="topbar-actions">
                 <?php if ($user): ?>
-                    <span class="badge badge-primary">
-                        <i class="fa-solid fa-id-badge"></i> <?= e(ucfirst($user['role'])) ?>
-                    </span>
-                    <a href="<?= BASE_URL ?>auth/logout.php" class="btn btn-outline btn-sm no-print">
-                        <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+                    <div class="topbar-user-badge">
+                        <div class="topbar-avatar"><?= strtoupper(substr($user['name'] ?: $user['username'], 0, 1)) ?></div>
+                        <div class="topbar-user-info">
+                            <span class="topbar-user-name"><?= e($user['name'] ?: $user['username']) ?></span>
+                            <span class="badge badge-primary badge-sm"><i class="fa-solid fa-id-badge"></i> <?= e(ucfirst($user['role'])) ?></span>
+                        </div>
+                    </div>
+                    <a href="<?= BASE_URL ?>auth/logout.php" class="btn btn-outline btn-sm no-print logout-btn" title="Logout">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                        <span class="logout-label">Logout</span>
                     </a>
                 <?php else: ?>
                     <a href="<?= BASE_URL ?>auth/login.php" class="btn btn-primary btn-sm">
