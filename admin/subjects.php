@@ -35,8 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ");
         $stmt->execute([$code, $name, $clearance_requirements !== '' ? $clearance_requirements : null, $instructor_id, $period_id]);
         set_flash('success', "Subject '{$code}' created and assigned to instructor.");
-        header('Location: ' . BASE_URL . 'admin/subjects.php');
-        exit;
+        redirect('admin/subjects.php');
     }
 }
 
@@ -129,7 +128,7 @@ include __DIR__ . '/../includes/navbar.php';
             </div>
         <?php endif; ?>
 
-        <form action="" method="POST">
+        <form action="<?= url('admin/subjects.php') ?>" method="POST">
             <div class="form-group">
                 <label class="form-label" for="period_id">Clearance Period *</label>
                 <select name="period_id" id="period_id" class="form-control" required>

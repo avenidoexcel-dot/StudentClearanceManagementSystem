@@ -1,0 +1,23 @@
+# ==============================================================================
+# Student Clearance Management System (ClearanceHub) - Apache Configuration
+# ==============================================================================
+
+# 1. Prevent Directory Browsing
+Options -Indexes
+
+# 2. Set Default Directory Index
+DirectoryIndex index.php
+
+# 3. Protect Sensitive Environment, Config, and Database Files
+<FilesMatch "^\.env|config\.(production|local)\.php|database\.sql|composer\.(json|lock)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# 4. UTF-8 Character Encoding
+AddDefaultCharset UTF-8

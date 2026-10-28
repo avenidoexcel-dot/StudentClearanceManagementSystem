@@ -7,8 +7,7 @@ require_role('instructor');
 $user = current_user();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: ' . BASE_URL . 'instructor/dashboard.php');
-    exit;
+    redirect('instructor/dashboard.php');
 }
 
 $action    = $_POST['action'] ?? '';
@@ -28,6 +27,12 @@ if ($action === 'single_update') {
     $record = $verifyStmt->fetch();
 
     if ($record) {
+        if ($status === 'cleared' && $remarks === '') {
+            $remarks = 'Requirements satisfied and cleared by instructor';
+        } elseif ($status === 'deficient' && $remarks === '') {
+            $remarks = 'Lacking required course submissions/materials';
+        }
+
         $updateStmt = $pdo->prepare("
             UPDATE clearance_subject_status 
             SET status = ?, remarks = ?, updated_at = NOW() 
@@ -95,5 +100,4 @@ if ($action === 'single_update') {
     }
 }
 
-header('Location: ' . BASE_URL . 'instructor/dashboard.php?subject_id=' . $subjectId);
-exit;
+redirect('instructor/dashboard.php?subject_id=' . $subjectId);

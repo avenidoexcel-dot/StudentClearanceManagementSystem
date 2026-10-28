@@ -113,7 +113,7 @@ include __DIR__ . '/../includes/navbar.php';
                 </p>
             </div>
             <div>
-                <a href="<?= BASE_URL ?>student/request.php" class="btn btn-primary" style="padding: 14px 24px; font-size: 15px; box-shadow: 0 4px 15px rgba(67, 56, 202, 0.4);">
+                <a href="<?= url('student/request.php') ?>" class="btn btn-primary" style="padding: 14px 24px; font-size: 15px; box-shadow: 0 4px 15px rgba(67, 56, 202, 0.4);">
                     <i class="fa-solid fa-paper-plane"></i> Submit Clearance Request Now
                 </a>
             </div>
@@ -179,7 +179,7 @@ include __DIR__ . '/../includes/navbar.php';
             </div>
             <div>
                 <?php if ($clearanceRequest['overall_status'] === 'cleared'): ?>
-                    <a href="<?= BASE_URL ?>student/certificate.php" class="btn btn-success" target="_blank" style="box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);">
+                    <a href="<?= url('student/certificate.php') ?>" class="btn btn-success" target="_blank" style="box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);">
                         <i class="fa-solid fa-award"></i> View Official Clearance Certificate
                     </a>
                 <?php else: ?>
@@ -222,20 +222,22 @@ include __DIR__ . '/../includes/navbar.php';
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Subject Code</th>
-                            <th>Subject Name</th>
-                            <th>Assigned Instructor</th>
-                            <th>Status</th>
+                            <th>Subject</th>
+                            <th>Instructor</th>
                             <th>Clearance Requirements</th>
-                            <th>Remarks / Deficiencies</th>
-                            <th>Date Signed</th>
+                            <th>Status</th>
+                            <th>Passed Compliance</th>
+                            <th>Lacking / Deficiencies</th>
+                            <th style="text-align: right;">Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php foreach ($subjStatusList as $subj): ?>
                             <tr>
-                                <td><strong style="color: var(--primary);"><?= e($subj['subject_code']) ?></strong></td>
-                                <td><?= e($subj['subject_name']) ?></td>
+                                <td>
+                                    <strong style="color: var(--primary); font-size: 14px;"><?= e($subj['subject_code']) ?></strong>
+                                    <div style="font-size: 12px; color: var(--text-muted);"><?= e($subj['subject_name']) ?></div>
+                                </td>
                                 <td>
                                     <div style="display: flex; align-items: center; gap: 8px;">
                                         <i class="fa-regular fa-user" style="color: #94a3b8; font-size: 12px;"></i>
@@ -245,7 +247,6 @@ include __DIR__ . '/../includes/navbar.php';
                                         <div style="font-size: 11px; color: var(--text-muted); margin-left: 20px;"><?= e($subj['instructor_email']) ?></div>
                                     <?php endif; ?>
                                 </td>
-                                <td><?= render_status_badge($subj['status']) ?></td>
                                 <td>
                                     <?php if (!empty($subj['clearance_requirements'])): ?>
                                         <button type="button" class="btn btn-outline btn-sm view-req-btn"
@@ -262,19 +263,48 @@ include __DIR__ . '/../includes/navbar.php';
                                         </span>
                                     <?php endif; ?>
                                 </td>
+                                <td><?= render_status_badge($subj['status']) ?></td>
+                                <td>
+                                    <?php if (!empty($subj['proof_file']) || !empty($subj['student_note'])): ?>
+                                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                                            <?php if (!empty($subj['proof_file'])): ?>
+                                                <a href="<?= url('uploads/proofs/' . $subj['proof_file']) ?>" target="_blank" class="btn btn-outline btn-sm" style="padding: 3px 8px; font-size: 11px; display: inline-flex; align-items: center; gap: 4px; width: fit-content;">
+                                                    <i class="fa-solid fa-paperclip"></i> View File
+                                                </a>
+                                            <?php endif; ?>
+                                            <?php if (!empty($subj['student_note'])): ?>
+                                                <div style="font-size: 11px; color: #334155; background: rgba(241, 245, 249, 0.8); border: 1px solid #e2e8f0; padding: 4px 8px; border-radius: 4px; max-width: 220px;" title="<?= e($subj['student_note']) ?>">
+                                                    <strong>Note:</strong> <?= e(mb_strimwidth($subj['student_note'], 0, 45, '...')) ?>
+                                                </div>
+                                            <?php endif; ?>
+                                            <?php if (!empty($subj['submitted_at'])): ?>
+                                                <span style="font-size: 10px; color: var(--text-muted);">
+                                                    <i class="fa-regular fa-clock"></i> <?= format_datetime($subj['submitted_at'], 'M d, Y h:i A') ?>
+                                                </span>
+                                            <?php endif; ?>
+                                        </div>
+                                    <?php else: ?>
+                                        <span style="font-size: 12px; color: #94a3b8; font-style: italic;">None submitted yet</span>
+                                    <?php endif; ?>
+                                </td>
                                 <td>
                                     <?php if ($subj['status'] === 'deficient'): ?>
-                                        <div style="color: var(--danger); font-size: 13px; font-weight: 500;">
-                                            <i class="fa-solid fa-triangle-exclamation"></i> <?= e($subj['remarks'] ?: 'Action required by instructor') ?>
+                                        <div style="color: var(--danger); font-size: 12px; font-weight: 600; background: rgba(254, 242, 242, 0.8); border: 1px solid rgba(254, 202, 202, 0.8); border-radius: 4px; padding: 6px 10px; max-width: 260px;">
+                                            <i class="fa-solid fa-triangle-exclamation"></i> <strong>Lacking:</strong> <?= e($subj['remarks'] ?: 'Action required by instructor') ?>
                                         </div>
                                     <?php elseif (!empty($subj['remarks'])): ?>
-                                        <span style="font-size: 13px; color: var(--text-muted);"><?= e($subj['remarks']) ?></span>
+                                        <span style="font-size: 12px; color: var(--text-muted);"><?= e($subj['remarks']) ?></span>
                                     <?php else: ?>
                                         <span style="color: #cbd5e1;">—</span>
                                     <?php endif; ?>
                                 </td>
-                                <td style="font-size: 12px; color: var(--text-muted);">
-                                    <?= format_datetime($subj['updated_at']) ?>
+                                <td style="text-align: right;">
+                                    <a href="<?= url('student/upload_proof.php?type=subject&id=' . $subj['id']) ?>" 
+                                       class="btn <?= $subj['status'] === 'deficient' ? 'btn-danger' : 'btn-outline' ?> btn-sm"
+                                       title="Submit or update compliance details for instructor review">
+                                        <i class="fa-solid <?= $subj['status'] === 'deficient' ? 'fa-triangle-exclamation' : 'fa-upload' ?>"></i>
+                                        <?= $subj['status'] === 'deficient' ? 'Comply Deficiencies' : (!empty($subj['proof_file']) || !empty($subj['student_note']) ? 'Update' : 'Submit') ?>
+                                    </a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -301,9 +331,9 @@ include __DIR__ . '/../includes/navbar.php';
                         <th>Office / Department</th>
                         <th>Signatory Officer</th>
                         <th>Status</th>
-                        <th>Proof / Attachment</th>
-                        <th>Remarks / Deficiencies</th>
-                        <th>Action</th>
+                        <th>Passed Compliance / Proof</th>
+                        <th>Lacking / Deficiencies</th>
+                        <th style="text-align: right;">Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -318,32 +348,53 @@ include __DIR__ . '/../includes/navbar.php';
                             </td>
                             <td><?= render_status_badge($dept['status']) ?></td>
                             <td>
-                                <?php if (!empty($dept['proof_file'])): ?>
-                                    <a href="<?= BASE_URL ?>uploads/proofs/<?= e($dept['proof_file']) ?>" target="_blank" class="btn btn-outline btn-sm">
-                                        <i class="fa-solid fa-paperclip"></i> View Proof
-                                    </a>
+                                <?php if (!empty($dept['proof_file']) || !empty($dept['student_note'])): ?>
+                                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                                        <?php if (!empty($dept['proof_file'])): ?>
+                                            <a href="<?= url('uploads/proofs/' . $dept['proof_file']) ?>" target="_blank" class="btn btn-outline btn-sm" style="padding: 3px 8px; font-size: 11px; display: inline-flex; align-items: gap; gap: 4px; width: fit-content;">
+                                                <i class="fa-solid fa-paperclip"></i> View Proof
+                                            </a>
+                                        <?php elseif ($dept['requires_proof']): ?>
+                                            <span style="font-size: 11px; color: #ea580c; font-weight: 600;">
+                                                <i class="fa-solid fa-asterisk"></i> Proof Required
+                                            </span>
+                                        <?php endif; ?>
+                                        <?php if (!empty($dept['student_note'])): ?>
+                                            <div style="font-size: 11px; color: #334155; background: rgba(241, 245, 249, 0.8); border: 1px solid #e2e8f0; padding: 4px 8px; border-radius: 4px; max-width: 220px;" title="<?= e($dept['student_note']) ?>">
+                                                <strong>Note:</strong> <?= e(mb_strimwidth($dept['student_note'], 0, 45, '...')) ?>
+                                            </div>
+                                        <?php endif; ?>
+                                        <?php if (!empty($dept['submitted_at'])): ?>
+                                            <span style="font-size: 10px; color: var(--text-muted);">
+                                                <i class="fa-regular fa-clock"></i> <?= format_datetime($dept['submitted_at'], 'M d, Y h:i A') ?>
+                                            </span>
+                                        <?php endif; ?>
+                                    </div>
                                 <?php elseif ($dept['requires_proof']): ?>
                                     <span style="font-size: 12px; color: #ea580c; font-weight: 500;">
                                         <i class="fa-solid fa-asterisk"></i> Proof Required
                                     </span>
                                 <?php else: ?>
-                                    <span style="font-size: 12px; color: #94a3b8;">None</span>
+                                    <span style="font-size: 12px; color: #94a3b8; font-style: italic;">None submitted yet</span>
                                 <?php endif; ?>
                             </td>
                             <td>
                                 <?php if ($dept['status'] === 'deficient'): ?>
-                                    <div style="color: var(--danger); font-size: 13px; font-weight: 500;">
-                                        <i class="fa-solid fa-triangle-exclamation"></i> <?= e($dept['remarks'] ?: 'Compliance required') ?>
+                                    <div style="color: var(--danger); font-size: 12px; font-weight: 600; background: rgba(254, 242, 242, 0.8); border: 1px solid rgba(254, 202, 202, 0.8); border-radius: 4px; padding: 6px 10px; max-width: 260px;">
+                                        <i class="fa-solid fa-triangle-exclamation"></i> <strong>Lacking:</strong> <?= e($dept['remarks'] ?: 'Compliance required') ?>
                                     </div>
                                 <?php elseif (!empty($dept['remarks'])): ?>
-                                    <span style="font-size: 13px; color: var(--text-muted);"><?= e($dept['remarks']) ?></span>
+                                    <span style="font-size: 12px; color: var(--text-muted);"><?= e($dept['remarks']) ?></span>
                                 <?php else: ?>
                                     <span style="color: #cbd5e1;">—</span>
                                 <?php endif; ?>
                             </td>
-                            <td>
-                                <a href="<?= BASE_URL ?>student/upload_proof.php?status_id=<?= $dept['id'] ?>" class="btn btn-outline btn-sm" title="Upload receipt or compliance document">
-                                    <i class="fa-solid fa-upload"></i> Upload
+                            <td style="text-align: right;">
+                                <a href="<?= url('student/upload_proof.php?type=department&id=' . $dept['id']) ?>" 
+                                   class="btn <?= $dept['status'] === 'deficient' ? 'btn-danger' : 'btn-outline' ?> btn-sm" 
+                                   title="Upload receipt or compliance document">
+                                    <i class="fa-solid <?= $dept['status'] === 'deficient' ? 'fa-triangle-exclamation' : 'fa-upload' ?>"></i>
+                                    <?= $dept['status'] === 'deficient' ? 'Comply Deficiencies' : (!empty($dept['proof_file']) || !empty($dept['student_note']) ? 'Update' : 'Upload') ?>
                                 </a>
                             </td>
                         </tr>

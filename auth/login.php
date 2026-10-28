@@ -6,8 +6,7 @@ require_once __DIR__ . '/../config/helpers.php';
 // If already logged in, redirect to respective dashboard
 if (is_logged_in()) {
     $role = $_SESSION['role'] ?? 'student';
-    header("Location: " . BASE_URL . "{$role}/dashboard.php");
-    exit;
+    redirect("{$role}/dashboard.php");
 }
 
 $error = '';
@@ -64,8 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['section']         = $user['section'];
 
             set_flash('success', "Welcome back, " . $_SESSION['name'] . "!");
-            header("Location: " . BASE_URL . "{$user['role']}/dashboard.php");
-            exit;
+            redirect("{$user['role']}/dashboard.php");
         } else {
             $error = 'Invalid username/student ID or password.';
         }
@@ -82,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/style.css">
+    <link rel="stylesheet" href="<?= asset('assets/css/style.css') ?>">
 </head>
 <body class="auth-page">
 
@@ -110,7 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         <?php endif; ?>
 
-        <form action="" method="POST">
+        <form action="<?= url('auth/login.php') ?>" method="POST">
             <div class="form-group">
                 <label class="form-label" for="username">Username or Student ID</label>
                 <div style="position: relative;">
@@ -133,7 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </form>
 
         <div style="margin-top: 24px; text-align: center; font-size: 13px; color: var(--text-muted);">
-            Don't have an account yet? <a href="<?= BASE_URL ?>auth/register.php" style="font-weight: 600;">Register as Student</a>
+            Don't have an account yet? <a href="<?= url('auth/register.php') ?>" style="font-weight: 600;">Register as Student</a>
         </div>
 
         <!-- Quick Demo Credentials Box -->

@@ -7,8 +7,7 @@ require_role('signatory');
 $user = current_user();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: ' . BASE_URL . 'signatory/dashboard.php');
-    exit;
+    redirect('signatory/dashboard.php');
 }
 
 $action = $_POST['action'] ?? '';
@@ -28,6 +27,12 @@ if ($action === 'single_update') {
     $record = $stmt->fetch();
 
     if ($record) {
+        if ($status === 'cleared' && $remarks === '') {
+            $remarks = 'Cleared by department officer';
+        } elseif ($status === 'deficient' && $remarks === '') {
+            $remarks = 'Lacking compliance requirements or fee payment';
+        }
+
         $updateStmt = $pdo->prepare("
             UPDATE clearance_signatory_status
             SET status = ?, remarks = ?, signatory_id = ?, updated_at = NOW()
@@ -70,5 +75,4 @@ if ($action === 'single_update') {
     }
 }
 
-header('Location: ' . BASE_URL . 'signatory/dashboard.php');
-exit;
+redirect('signatory/dashboard.php');

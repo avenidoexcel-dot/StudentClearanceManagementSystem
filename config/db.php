@@ -91,17 +91,45 @@ if (!defined('DB_NAME')) {
 // ==============================================================================
 // 4. BASE URL RESOLUTION
 // ==============================================================================
-$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https://" : "http://";
-$script_dir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
-$parts = explode('/', trim($script_dir, '/'));
-$base_path = '';
-if (in_array('clearance', $parts)) {
-    $index = array_search('clearance', $parts);
-    $base_path = '/' . implode('/', array_slice($parts, 0, $index + 1)) . '/';
-} else {
-    $base_path = '/';
+if (!defined('BASE_URL')) {
+    // 4.1 Check environment variables (APP_URL or BASE_URL)
+    $envBaseUrl = getenv('BASE_URL') ?: (getenv('APP_URL') ?: ($_ENV['BASE_URL'] ?? ($_ENV['APP_URL'] ?? ($_SERVER['BASE_URL'] ?? ($_SERVER['APP_URL'] ?? '')))));
+    if (!empty($envBaseUrl)) {
+        define('BASE_URL', rtrim($envBaseUrl, '/') . '/');
+    } else {
+        // 4.2 Detect protocol (supporting SSL termination and reverse proxies)
+        $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+            || (isset($_SERVER['SERVER_PORT']) && (int)$_SERVER['SERVER_PORT'] === 443)
+            || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https')
+            || (isset($_SERVER['HTTP_X_FORWARDED_SSL']) && strtolower($_SERVER['HTTP_X_FORWARDED_SSL']) === 'on');
+        $protocol = $isHttps ? 'https://' : 'http://';
+
+        // 4.3 Detect host
+        $host = $_SERVER['HTTP_X_FORWARDED_HOST'] ?? ($_SERVER['HTTP_HOST'] ?? 'localhost');
+
+        // 4.4 Compute web base path relative to server document root or script path
+        $appRoot = str_replace('\\', '/', realpath(dirname(__DIR__)));
+        $docRoot = !empty($_SERVER['DOCUMENT_ROOT']) ? str_replace('\\', '/', realpath($_SERVER['DOCUMENT_ROOT'])) : '';
+        $base_path = '/';
+
+        if (!empty($docRoot) && stripos($appRoot, $docRoot) === 0) {
+            $rel = trim(substr($appRoot, strlen($docRoot)), '/');
+            $base_path = $rel === '' ? '/' : '/' . $rel . '/';
+        } elseif (!empty($_SERVER['SCRIPT_NAME']) && !empty($_SERVER['SCRIPT_FILENAME'])) {
+            $normScript = str_replace('\\', '/', $_SERVER['SCRIPT_FILENAME']);
+            if (stripos($normScript, $appRoot) === 0) {
+                $relScript = trim(substr($normScript, strlen($appRoot)), '/');
+                $cleanScript = str_replace('\\', '/', $_SERVER['SCRIPT_NAME']);
+                if (substr($cleanScript, -strlen($relScript)) === $relScript) {
+                    $base = substr($cleanScript, 0, -strlen($relScript));
+                    $base_path = '/' . trim($base, '/') . (trim($base, '/') === '' ? '' : '/');
+                }
+            }
+        }
+
+        define('BASE_URL', rtrim($protocol . $host . $base_path, '/') . '/');
+    }
 }
-define('BASE_URL', rtrim($protocol . $http_host . $base_path, '/') . '/');
 
 // ==============================================================================
 // 5. PDO CONNECTION

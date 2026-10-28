@@ -28,8 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ");
             $insert->execute([$code, $name, $description, $requires_proof]);
             set_flash('success', "Department '{$name}' created successfully.");
-            header('Location: ' . BASE_URL . 'admin/departments.php');
-            exit;
+            redirect('admin/departments.php');
         }
     }
 }
@@ -111,7 +110,7 @@ include __DIR__ . '/../includes/navbar.php';
             </div>
         <?php endif; ?>
 
-        <form action="" method="POST">
+        <form action="<?= url('admin/departments.php') ?>" method="POST">
             <div class="form-group">
                 <label class="form-label" for="code">Office Code *</label>
                 <input type="text" name="code" id="code" class="form-control" required placeholder="e.g. CLINIC, ALUMNI, DEAN">

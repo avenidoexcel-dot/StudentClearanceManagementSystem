@@ -12,8 +12,7 @@ if (isset($_GET['set_active'])) {
     $updateStmt = $pdo->prepare("UPDATE clearance_periods SET is_active = 1 WHERE id = ?");
     $updateStmt->execute([$periodId]);
     set_flash('success', 'Clearance period activated successfully.');
-    header('Location: ' . BASE_URL . 'admin/periods.php');
-    exit;
+    redirect('admin/periods.php');
 }
 
 // Handle Add Period
@@ -39,8 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ");
         $stmt->execute([$name, $acad_year, $semester, $start_date, $end_date, $set_active]);
         set_flash('success', "Clearance period '{$name}' created successfully.");
-        header('Location: ' . BASE_URL . 'admin/periods.php');
-        exit;
+        redirect('admin/periods.php');
     }
 }
 
@@ -98,7 +96,7 @@ include __DIR__ . '/../includes/navbar.php';
                             </td>
                             <td style="text-align: right;">
                                 <?php if (!$p['is_active']): ?>
-                                    <a href="?set_active=<?= $p['id'] ?>" class="btn btn-outline btn-sm" onclick="return confirm('Activate this clearance period?');">
+                                    <a href="<?= url('admin/periods.php?set_active=' . $p['id']) ?>" class="btn btn-outline btn-sm" onclick="return confirm('Activate this clearance period?');">
                                         <i class="fa-solid fa-toggle-on"></i> Activate
                                     </a>
                                 <?php else: ?>
@@ -128,7 +126,7 @@ include __DIR__ . '/../includes/navbar.php';
             </div>
         <?php endif; ?>
 
-        <form action="" method="POST">
+        <form action="<?= url('admin/periods.php') ?>" method="POST">
             <div class="form-group">
                 <label class="form-label" for="name">Term Title *</label>
                 <input type="text" name="name" id="name" class="form-control" required placeholder="e.g. 2nd Semester Clearance 2026-2027">

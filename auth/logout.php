@@ -14,5 +14,4 @@ session_destroy();
 
 session_start();
 set_flash('success', 'You have been successfully logged out.');
-header('Location: ' . BASE_URL . 'auth/login.php');
-exit;
+redirect('auth/login.php');

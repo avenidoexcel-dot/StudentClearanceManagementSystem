@@ -12,8 +12,7 @@ if (isset($_GET['reset_pw'])) {
     $resetStmt = $pdo->prepare("UPDATE users SET password = ? WHERE id = ?");
     $resetStmt->execute([$defaultPass, $uid]);
     set_flash('success', 'User password has been reset to "password123".');
-    header('Location: ' . BASE_URL . 'admin/users.php');
-    exit;
+    redirect('admin/users.php');
 }
 
 if (isset($_GET['toggle_status'])) {
@@ -21,8 +20,7 @@ if (isset($_GET['toggle_status'])) {
     $toggleStmt = $pdo->prepare("UPDATE users SET status = IF(status = 'active', 'inactive', 'active') WHERE id = ?");
     $toggleStmt->execute([$uid]);
     set_flash('success', 'User account status updated.');
-    header('Location: ' . BASE_URL . 'admin/users.php');
-    exit;
+    redirect('admin/users.php');
 }
 
 // Handle Add User
@@ -55,8 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ");
             $insert->execute([$username, $hashed, $role, $first_name, $last_name, $email, $student_id, $department_id, $course, $year_level, $section]);
             set_flash('success', "User '{$username}' ({$role}) created successfully.");
-            header('Location: ' . BASE_URL . 'admin/users.php');
-            exit;
+            redirect('admin/users.php');
         }
     }
 }
@@ -88,11 +85,11 @@ include __DIR__ . '/../includes/navbar.php';
 
 <!-- Role Filter Tabs -->
 <div style="display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap;">
-    <a href="users.php" class="btn btn-sm <?= empty($roleFilter) ? 'btn-primary' : 'btn-outline' ?>">All Users</a>
-    <a href="users.php?role=student" class="btn btn-sm <?= $roleFilter === 'student' ? 'btn-primary' : 'btn-outline' ?>"><i class="fa-solid fa-user-graduate"></i> Students</a>
-    <a href="users.php?role=instructor" class="btn btn-sm <?= $roleFilter === 'instructor' ? 'btn-primary' : 'btn-outline' ?>"><i class="fa-solid fa-chalkboard-user"></i> Faculty Instructors</a>
-    <a href="users.php?role=signatory" class="btn btn-sm <?= $roleFilter === 'signatory' ? 'btn-primary' : 'btn-outline' ?>"><i class="fa-solid fa-building-user"></i> Department Signatories</a>
-    <a href="users.php?role=admin" class="btn btn-sm <?= $roleFilter === 'admin' ? 'btn-primary' : 'btn-outline' ?>"><i class="fa-solid fa-shield-halved"></i> Administrators</a>
+    <a href="<?= url('admin/users.php') ?>" class="btn btn-sm <?= empty($roleFilter) ? 'btn-primary' : 'btn-outline' ?>">All Users</a>
+    <a href="<?= url('admin/users.php?role=student') ?>" class="btn btn-sm <?= $roleFilter === 'student' ? 'btn-primary' : 'btn-outline' ?>"><i class="fa-solid fa-user-graduate"></i> Students</a>
+    <a href="<?= url('admin/users.php?role=instructor') ?>" class="btn btn-sm <?= $roleFilter === 'instructor' ? 'btn-primary' : 'btn-outline' ?>"><i class="fa-solid fa-chalkboard-user"></i> Faculty Instructors</a>
+    <a href="<?= url('admin/users.php?role=signatory') ?>" class="btn btn-sm <?= $roleFilter === 'signatory' ? 'btn-primary' : 'btn-outline' ?>"><i class="fa-solid fa-building-user"></i> Department Signatories</a>
+    <a href="<?= url('admin/users.php?role=admin') ?>" class="btn btn-sm <?= $roleFilter === 'admin' ? 'btn-primary' : 'btn-outline' ?>"><i class="fa-solid fa-shield-halved"></i> Administrators</a>
 </div>
 
 <div class="grid-2-1">
@@ -150,10 +147,10 @@ include __DIR__ . '/../includes/navbar.php';
                             </td>
                             <td style="text-align: right;">
                                 <div style="display: inline-flex; gap: 4px;">
-                                    <a href="?reset_pw=<?= $u['id'] ?>" class="btn btn-outline btn-sm" title="Reset password to password123" onclick="return confirm('Reset this password to password123?');">
+                                    <a href="<?= url('admin/users.php?reset_pw=' . $u['id']) ?>" class="btn btn-outline btn-sm" title="Reset password to password123" onclick="return confirm('Reset this password to password123?');">
                                         <i class="fa-solid fa-key"></i>
                                     </a>
-                                    <a href="?toggle_status=<?= $u['id'] ?>" class="btn btn-outline btn-sm" title="Toggle active status">
+                                    <a href="<?= url('admin/users.php?toggle_status=' . $u['id']) ?>" class="btn btn-outline btn-sm" title="Toggle active status">
                                         <i class="fa-solid <?= $u['status'] === 'active' ? 'fa-ban' : 'fa-check' ?>"></i>
                                     </a>
                                 </div>
@@ -181,7 +178,7 @@ include __DIR__ . '/../includes/navbar.php';
             </div>
         <?php endif; ?>
 
-        <form action="" method="POST" id="userForm">
+        <form action="<?= url('admin/users.php' . (!empty($roleFilter) ? '?role=' . urlencode($roleFilter) : '')) ?>" method="POST" id="userForm">
             <div class="form-group">
                 <label class="form-label" for="userRole">Account Role *</label>
                 <select name="role" id="userRole" class="form-control" required onchange="toggleRoleFields(this.value)">

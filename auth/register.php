@@ -5,8 +5,7 @@ require_once __DIR__ . '/../config/helpers.php';
 
 if (is_logged_in()) {
     $role = $_SESSION['role'] ?? 'student';
-    header("Location: " . BASE_URL . "{$role}/dashboard.php");
-    exit;
+    redirect("{$role}/dashboard.php");
 }
 
 $error = '';
@@ -55,8 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if ($success) {
                 set_flash('success', 'Registration successful! You may now log in.');
-                header('Location: ' . BASE_URL . 'auth/login.php');
-                exit;
+                redirect('auth/login.php');
             } else {
                 $error = 'Registration failed. Please try again.';
             }
@@ -74,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/style.css">
+    <link rel="stylesheet" href="<?= asset('assets/css/style.css') ?>">
 </head>
 <body class="auth-page">
 
@@ -95,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         <?php endif; ?>
 
-        <form action="" method="POST">
+        <form action="<?= url('auth/register.php') ?>" method="POST">
             <div class="form-row-2">
                 <div class="form-group">
                     <label class="form-label" for="first_name">First Name *</label>
@@ -169,7 +167,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </form>
 
         <div style="margin-top: 20px; text-align: center; font-size: 13px; color: var(--text-muted);">
-            Already have an account? <a href="<?= BASE_URL ?>auth/login.php" style="font-weight: 600;">Sign in here</a>
+            Already have an account? <a href="<?= url('auth/login.php') ?>" style="font-weight: 600;">Sign in here</a>
         </div>
     </div>
 </div>

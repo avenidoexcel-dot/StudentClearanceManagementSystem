@@ -35,14 +35,15 @@ function current_user(): ?array {
     ];
 }
 
+require_once __DIR__ . '/helpers.php';
+
 /**
  * Enforce login
  */
 function require_login(string $redirect = 'auth/login.php') {
     if (!is_logged_in()) {
         set_flash('error', 'Please log in to access this page.');
-        header('Location: ' . BASE_URL . $redirect);
-        exit;
+        redirect($redirect);
     }
 }
 
@@ -59,17 +60,16 @@ function require_role($allowed_roles) {
         set_flash('error', 'Unauthorized access for your account role.');
         // Redirect to their respective dashboard
         if ($current_role === 'student') {
-            header('Location: ' . BASE_URL . 'student/dashboard.php');
+            redirect('student/dashboard.php');
         } elseif ($current_role === 'instructor') {
-            header('Location: ' . BASE_URL . 'instructor/dashboard.php');
+            redirect('instructor/dashboard.php');
         } elseif ($current_role === 'signatory') {
-            header('Location: ' . BASE_URL . 'signatory/dashboard.php');
+            redirect('signatory/dashboard.php');
         } elseif ($current_role === 'admin') {
-            header('Location: ' . BASE_URL . 'admin/dashboard.php');
+            redirect('admin/dashboard.php');
         } else {
-            header('Location: ' . BASE_URL . 'auth/login.php');
+            redirect('auth/login.php');
         }
-        exit;
     }
 }
 
