@@ -51,6 +51,8 @@ if (!$record) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_csrf("student/upload_proof.php?type={$type}&id={$id}");
+
     $studentNote = trim($_POST['student_note'] ?? '');
     $uploadedFileName = null;
 
@@ -276,6 +278,7 @@ include __DIR__ . '/../includes/navbar.php';
 
         <!-- Submission Form -->
         <form action="<?= url('student/upload_proof.php?type=' . $type . '&id=' . $id) ?>" method="POST" enctype="multipart/form-data">
+            <?= csrf_field() ?>
             <div class="form-group">
                 <label class="form-label" for="proof_file">
                     Attach Supporting Document / File

@@ -10,6 +10,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     redirect('signatory/dashboard.php');
 }
 
+require_csrf('signatory/dashboard.php');
+
 $action = $_POST['action'] ?? '';
 $deptId = (int)($user['department_id'] ?? 0);
 

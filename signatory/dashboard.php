@@ -117,6 +117,7 @@ include __DIR__ . '/../includes/navbar.php';
                 </div>
 
                 <form action="<?= url('signatory/update_status.php') ?>" method="POST" onsubmit="return confirm('Clear ALL pending students for <?= e($department['name']) ?>?');">
+                    <?= csrf_field() ?>
                     <input type="hidden" name="action" value="batch_approve">
                     <button type="submit" class="btn btn-success btn-sm">
                         <i class="fa-solid fa-check-double"></i> Clear All Pending
@@ -217,6 +218,7 @@ include __DIR__ . '/../includes/navbar.php';
 
                                         <!-- Quick Approve Action -->
                                         <form action="<?= url('signatory/update_status.php') ?>" method="POST" style="display: inline;">
+                                            <?= csrf_field() ?>
                                             <input type="hidden" name="action" value="single_update">
                                             <input type="hidden" name="status_id" value="<?= $st['status_id'] ?>">
                                             <input type="hidden" name="status" value="cleared">
@@ -249,6 +251,7 @@ include __DIR__ . '/../includes/navbar.php';
 <div class="modal-overlay" id="sigReviewModal">
     <div class="modal-container" style="max-width: 650px;">
         <form action="<?= url('signatory/update_status.php') ?>" method="POST">
+            <?= csrf_field() ?>
             <input type="hidden" name="action" value="single_update">
             <input type="hidden" name="status_id" id="sigRevStatusId">
 
@@ -345,6 +348,7 @@ include __DIR__ . '/../includes/navbar.php';
 <div class="modal-overlay" id="signatoryDefModal">
     <div class="modal-container">
         <form action="<?= url('signatory/update_status.php') ?>" method="POST">
+            <?= csrf_field() ?>
             <input type="hidden" name="action" value="single_update">
             <input type="hidden" name="status" value="deficient">
             <input type="hidden" name="status_id" id="sigModalStatusId">

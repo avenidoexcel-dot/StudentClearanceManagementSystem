@@ -26,6 +26,8 @@ if (isset($_GET['toggle_status'])) {
 // Handle Add User
 $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_csrf('admin/users.php');
+
     $role          = $_POST['role'] ?? 'student';
     $first_name    = trim($_POST['first_name'] ?? '');
     $last_name     = trim($_POST['last_name'] ?? '');
@@ -46,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($check->fetch()) {
             $error = 'Username is already taken.';
         } else {
-            $hashed = password_hash($password, PASSWORD_DEFAULT);
+            $hashed = password_hash($password, PASSWORD_BCRYPT, ['cost' => 10]);
             $insert = $pdo->prepare("
                 INSERT INTO users (username, password, role, first_name, last_name, email, student_id, department_id, course, year_level, section, status)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active')
@@ -179,6 +181,7 @@ include __DIR__ . '/../includes/navbar.php';
         <?php endif; ?>
 
         <form action="<?= url('admin/users.php' . (!empty($roleFilter) ? '?role=' . urlencode($roleFilter) : '')) ?>" method="POST" id="userForm">
+            <?= csrf_field() ?>
             <div class="form-group">
                 <label class="form-label" for="userRole">Account Role *</label>
                 <select name="role" id="userRole" class="form-control" required onchange="toggleRoleFields(this.value)">

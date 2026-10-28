@@ -9,6 +9,7 @@ $error = '';
 
 // Handle Add Department
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_csrf('admin/departments.php');
     $code           = strtoupper(trim($_POST['code'] ?? ''));
     $name           = trim($_POST['name'] ?? '');
     $description    = trim($_POST['description'] ?? '');
@@ -111,6 +112,7 @@ include __DIR__ . '/../includes/navbar.php';
         <?php endif; ?>
 
         <form action="<?= url('admin/departments.php') ?>" method="POST">
+            <?= csrf_field() ?>
             <div class="form-group">
                 <label class="form-label" for="code">Office Code *</label>
                 <input type="text" name="code" id="code" class="form-control" required placeholder="e.g. CLINIC, ALUMNI, DEAN">

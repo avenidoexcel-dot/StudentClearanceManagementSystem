@@ -18,6 +18,7 @@ if (isset($_GET['set_active'])) {
 // Handle Add Period
 $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_csrf('admin/periods.php');
     $name       = trim($_POST['name'] ?? '');
     $acad_year  = trim($_POST['academic_year'] ?? '');
     $semester   = trim($_POST['semester'] ?? '');
@@ -127,6 +128,7 @@ include __DIR__ . '/../includes/navbar.php';
         <?php endif; ?>
 
         <form action="<?= url('admin/periods.php') ?>" method="POST">
+            <?= csrf_field() ?>
             <div class="form-group">
                 <label class="form-label" for="name">Term Title *</label>
                 <input type="text" name="name" id="name" class="form-control" required placeholder="e.g. 2nd Semester Clearance 2026-2027">

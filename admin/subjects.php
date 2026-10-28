@@ -20,6 +20,7 @@ ensure_clearance_requirements_column($pdo);
 
 $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_csrf('admin/subjects.php');
     $code                   = strtoupper(trim($_POST['code'] ?? ''));
     $name                   = trim($_POST['name'] ?? '');
     $instructor_id          = (int)($_POST['instructor_id'] ?? 0);
@@ -129,6 +130,7 @@ include __DIR__ . '/../includes/navbar.php';
         <?php endif; ?>
 
         <form action="<?= url('admin/subjects.php') ?>" method="POST">
+            <?= csrf_field() ?>
             <div class="form-group">
                 <label class="form-label" for="period_id">Clearance Period *</label>
                 <select name="period_id" id="period_id" class="form-control" required>

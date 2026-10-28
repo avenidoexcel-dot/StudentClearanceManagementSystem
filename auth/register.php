@@ -11,6 +11,8 @@ if (is_logged_in()) {
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_csrf('auth/register.php');
+
     $student_id = trim($_POST['student_id'] ?? '');
     $first_name = trim($_POST['first_name'] ?? '');
     $last_name  = trim($_POST['last_name'] ?? '');
@@ -35,7 +37,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($checkStmt->fetch()) {
             $error = 'Username or Student ID is already registered.';
         } else {
-            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+            // Securely hash password with Bcrypt
+            $hashedPassword = password_hash($password, PASSWORD_BCRYPT, ['cost' => 10]);
             $insertStmt = $pdo->prepare("
                 INSERT INTO users (username, password, role, first_name, last_name, email, student_id, course, year_level, section, status)
                 VALUES (?, ?, 'student', ?, ?, ?, ?, ?, ?, ?, 'active')
@@ -94,6 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php endif; ?>
 
         <form action="<?= url('auth/register.php') ?>" method="POST">
+            <?= csrf_field() ?>
             <div class="form-row-2">
                 <div class="form-group">
                     <label class="form-label" for="first_name">First Name *</label>

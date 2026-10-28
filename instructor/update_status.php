@@ -13,6 +13,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $action    = $_POST['action'] ?? '';
 $subjectId = (int)($_POST['subject_id'] ?? 0);
 
+require_csrf('instructor/dashboard.php?subject_id=' . $subjectId);
+
 if ($action === 'single_update') {
     $statusId = (int)($_POST['status_id'] ?? 0);
     $status   = in_array($_POST['status'] ?? '', ['cleared', 'deficient', 'pending']) ? $_POST['status'] : 'pending';

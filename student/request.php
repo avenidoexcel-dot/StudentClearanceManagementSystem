@@ -28,6 +28,8 @@ if ($existingRequest) {
 // 3. Process Request Submission
 $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_csrf('student/request.php');
+
     $note = trim($_POST['note'] ?? '');
 
     try {
@@ -195,6 +197,7 @@ include __DIR__ . '/../includes/navbar.php';
         </div>
 
         <form action="<?= url('student/request.php') ?>" method="POST">
+            <?= csrf_field() ?>
             <div class="form-group">
                 <label class="form-label" for="note">Submission Note / Remarks (Optional)</label>
                 <textarea name="note" id="note" class="form-control" placeholder="Any additional information or comments for your instructors and department signatories..."></textarea>

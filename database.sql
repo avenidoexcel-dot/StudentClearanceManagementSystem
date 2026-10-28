@@ -132,6 +132,16 @@ CREATE TABLE `clearance_subject_status` (
   UNIQUE KEY `unique_request_subject` (`request_id`, `subject_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- 9. Login Attempts (Rate Limiting & Brute Force Prevention)
+CREATE TABLE IF NOT EXISTS `login_attempts` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `ip_address` VARCHAR(45) NOT NULL,
+  `username` VARCHAR(100) NOT NULL,
+  `attempted_at` DATETIME NOT NULL,
+  INDEX `idx_ip_time` (`ip_address`, `attempted_at`),
+  INDEX `idx_user_time` (`username`, `attempted_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- ==========================================================
 -- SEED DATA FOR TESTING
 -- Default Passwords:
@@ -150,32 +160,32 @@ INSERT INTO `departments` (`id`, `code`, `name`, `description`, `requires_proof`
 (5, 'DHEAD', 'Department Head / Dean', 'Academic compliance and curriculum verification', 0, 1),
 (6, 'OSAS', 'Student Affairs (OSAS / SSC)', 'Uniform, ID compliance, and student organization dues', 0, 1);
 
--- Default Users
--- Passwords hashed using standard PHP password_hash(..., PASSWORD_DEFAULT):
--- 'admin123'      => $2y$10$vI8aWBnW3fID.ZQ4/zo1G.qH0vJ9e9F56zYxY6k4OqG7wQnE7gAWe
--- 'signatory123'  => $2y$10$C8.w1N8F3kK3N3d7yH2N8e1A1qN8F3kK3N3d7yH2N8e1A1qN8F3kK
--- We will also handle fallback verification in login.php so either hash or plaintext default works on initial install.
+-- Default Users (Bcrypt Hashes PASSWORD_BCRYPT)
+-- 'admin123'      => $2y$10$zlzrmAp24cTE9SpfjJ/HXezYSRjPsv/QX/PjZQA9zFx.46c0Maeiq
+-- 'signatory123'  => $2y$10$97rTrkgbRLfep4cSJVLr8u72dxpByjbw.5x2vL8QucELw0GSKUSvK
+-- 'instructor123' => $2y$10$z4wNI5CT/RA5bsD6uJnWh.7157G1J7uB33P2PxfsGKPkXvwJaVug2
+-- 'student123'    => $2y$10$zqxvvRYqhw8IDDm0Jr1gcumJ2p/ABshIRsZW2b6h5dnhql3Lvafuy
 
 INSERT INTO `users` (`id`, `username`, `password`, `role`, `first_name`, `last_name`, `email`, `student_id`, `department_id`, `course`, `year_level`, `section`, `status`) VALUES
 -- Admin
-(1, 'admin', '$2y$10$3y6Qy0N3j2w3gN7M4x3XfeQjN8L8aO5P0W6r7S1m3N9j0K1L2m3nO', 'admin', 'System', 'Administrator', 'admin@school.edu.ph', NULL, NULL, NULL, NULL, NULL, 'active'),
+(1, 'admin', '$2y$10$zlzrmAp24cTE9SpfjJ/HXezYSRjPsv/QX/PjZQA9zFx.46c0Maeiq', 'admin', 'System', 'Administrator', 'admin@school.edu.ph', NULL, NULL, NULL, NULL, NULL, 'active'),
 
 -- Department Signatories
-(2, 'lib_officer', '$2y$10$3y6Qy0N3j2w3gN7M4x3XfeQjN8L8aO5P0W6r7S1m3N9j0K1L2m3nO', 'signatory', 'Maria', 'Santos', 'library@school.edu.ph', NULL, 1, NULL, NULL, NULL, 'active'),
-(3, 'cashier', '$2y$10$3y6Qy0N3j2w3gN7M4x3XfeQjN8L8aO5P0W6r7S1m3N9j0K1L2m3nO', 'signatory', 'Robert', 'Cruz', 'cashier@school.edu.ph', NULL, 2, NULL, NULL, NULL, 'active'),
-(4, 'registrar', '$2y$10$3y6Qy0N3j2w3gN7M4x3XfeQjN8L8aO5P0W6r7S1m3N9j0K1L2m3nO', 'signatory', 'Elena', 'Reyes', 'registrar@school.edu.ph', NULL, 3, NULL, NULL, NULL, 'active'),
-(5, 'guidance', '$2y$10$3y6Qy0N3j2w3gN7M4x3XfeQjN8L8aO5P0W6r7S1m3N9j0K1L2m3nO', 'signatory', 'Grace', 'Mendoza', 'guidance@school.edu.ph', NULL, 4, NULL, NULL, NULL, 'active'),
-(6, 'dept_head', '$2y$10$3y6Qy0N3j2w3gN7M4x3XfeQjN8L8aO5P0W6r7S1m3N9j0K1L2m3nO', 'signatory', 'Dr. Arthur', 'Gonzales', 'depthead@school.edu.ph', NULL, 5, NULL, NULL, NULL, 'active'),
-(7, 'osas_officer', '$2y$10$3y6Qy0N3j2w3gN7M4x3XfeQjN8L8aO5P0W6r7S1m3N9j0K1L2m3nO', 'signatory', 'Liza', 'Dizon', 'osas@school.edu.ph', NULL, 6, NULL, NULL, NULL, 'active'),
+(2, 'lib_officer', '$2y$10$97rTrkgbRLfep4cSJVLr8u72dxpByjbw.5x2vL8QucELw0GSKUSvK', 'signatory', 'Maria', 'Santos', 'library@school.edu.ph', NULL, 1, NULL, NULL, NULL, 'active'),
+(3, 'cashier', '$2y$10$97rTrkgbRLfep4cSJVLr8u72dxpByjbw.5x2vL8QucELw0GSKUSvK', 'signatory', 'Robert', 'Cruz', 'cashier@school.edu.ph', NULL, 2, NULL, NULL, NULL, 'active'),
+(4, 'registrar', '$2y$10$97rTrkgbRLfep4cSJVLr8u72dxpByjbw.5x2vL8QucELw0GSKUSvK', 'signatory', 'Elena', 'Reyes', 'registrar@school.edu.ph', NULL, 3, NULL, NULL, NULL, 'active'),
+(5, 'guidance', '$2y$10$97rTrkgbRLfep4cSJVLr8u72dxpByjbw.5x2vL8QucELw0GSKUSvK', 'signatory', 'Grace', 'Mendoza', 'guidance@school.edu.ph', NULL, 4, NULL, NULL, NULL, 'active'),
+(6, 'dept_head', '$2y$10$97rTrkgbRLfep4cSJVLr8u72dxpByjbw.5x2vL8QucELw0GSKUSvK', 'signatory', 'Dr. Arthur', 'Gonzales', 'depthead@school.edu.ph', NULL, 5, NULL, NULL, NULL, 'active'),
+(7, 'osas_officer', '$2y$10$97rTrkgbRLfep4cSJVLr8u72dxpByjbw.5x2vL8QucELw0GSKUSvK', 'signatory', 'Liza', 'Dizon', 'osas@school.edu.ph', NULL, 6, NULL, NULL, NULL, 'active'),
 
 -- Subject Instructors
-(8, 'prof_ramirez', '$2y$10$3y6Qy0N3j2w3gN7M4x3XfeQjN8L8aO5P0W6r7S1m3N9j0K1L2m3nO', 'instructor', 'Juan', 'Ramirez', 'j.ramirez@school.edu.ph', NULL, NULL, NULL, NULL, NULL, 'active'),
-(9, 'prof_flores', '$2y$10$3y6Qy0N3j2w3gN7M4x3XfeQjN8L8aO5P0W6r7S1m3N9j0K1L2m3nO', 'instructor', 'Anna', 'Flores', 'a.flores@school.edu.ph', NULL, NULL, NULL, NULL, NULL, 'active'),
-(10, 'prof_torres', '$2y$10$3y6Qy0N3j2w3gN7M4x3XfeQjN8L8aO5P0W6r7S1m3N9j0K1L2m3nO', 'instructor', 'Michael', 'Torres', 'm.torres@school.edu.ph', NULL, NULL, NULL, NULL, NULL, 'active'),
+(8, 'prof_ramirez', '$2y$10$z4wNI5CT/RA5bsD6uJnWh.7157G1J7uB33P2PxfsGKPkXvwJaVug2', 'instructor', 'Juan', 'Ramirez', 'j.ramirez@school.edu.ph', NULL, NULL, NULL, NULL, NULL, 'active'),
+(9, 'prof_flores', '$2y$10$z4wNI5CT/RA5bsD6uJnWh.7157G1J7uB33P2PxfsGKPkXvwJaVug2', 'instructor', 'Anna', 'Flores', 'a.flores@school.edu.ph', NULL, NULL, NULL, NULL, NULL, 'active'),
+(10, 'prof_torres', '$2y$10$z4wNI5CT/RA5bsD6uJnWh.7157G1J7uB33P2PxfsGKPkXvwJaVug2', 'instructor', 'Michael', 'Torres', 'm.torres@school.edu.ph', NULL, NULL, NULL, NULL, NULL, 'active'),
 
 -- Sample Students
-(11, 'student1', '$2y$10$3y6Qy0N3j2w3gN7M4x3XfeQjN8L8aO5P0W6r7S1m3N9j0K1L2m3nO', 'student', 'Excel', 'Avenido', 'avenido.excel@student.edu.ph', '2026-0001', NULL, 'BSIT', '3rd Year', '3-A', 'active'),
-(12, 'student2', '$2y$10$3y6Qy0N3j2w3gN7M4x3XfeQjN8L8aO5P0W6r7S1m3N9j0K1L2m3nO', 'student', 'Bea', 'Aquino', 'bea.aquino@student.edu.ph', '2026-0002', NULL, 'BSIS', '3rd Year', '3-B', 'active');
+(11, 'student1', '$2y$10$zqxvvRYqhw8IDDm0Jr1gcumJ2p/ABshIRsZW2b6h5dnhql3Lvafuy', 'student', 'Excel', 'Avenido', 'avenido.excel@student.edu.ph', '2026-0001', NULL, 'BSIT', '3rd Year', '3-A', 'active'),
+(12, 'student2', '$2y$10$zqxvvRYqhw8IDDm0Jr1gcumJ2p/ABshIRsZW2b6h5dnhql3Lvafuy', 'student', 'Bea', 'Aquino', 'bea.aquino@student.edu.ph', '2026-0002', NULL, 'BSIS', '3rd Year', '3-B', 'active');
 
 -- Clearance Period
 INSERT INTO `clearance_periods` (`id`, `name`, `academic_year`, `semester`, `start_date`, `end_date`, `is_active`) VALUES

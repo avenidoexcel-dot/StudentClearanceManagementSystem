@@ -185,6 +185,7 @@ include __DIR__ . '/../includes/navbar.php';
                     </div>
 
                     <form action="<?= url('instructor/update_status.php') ?>" method="POST" onsubmit="return confirm('Are you sure you want to approve ALL pending students in this class?');">
+                        <?= csrf_field() ?>
                         <input type="hidden" name="action" value="batch_approve">
                         <input type="hidden" name="subject_id" value="<?= $currentSubject['id'] ?>">
                         <button type="submit" class="btn btn-success btn-sm">
@@ -283,6 +284,7 @@ include __DIR__ . '/../includes/navbar.php';
 
                                             <!-- Quick Approve Form -->
                                             <form action="<?= url('instructor/update_status.php') ?>" method="POST" style="display: inline;">
+                                                <?= csrf_field() ?>
                                                 <input type="hidden" name="action" value="single_update">
                                                 <input type="hidden" name="status_id" value="<?= $st['status_id'] ?>">
                                                 <input type="hidden" name="status" value="cleared">
@@ -317,6 +319,7 @@ include __DIR__ . '/../includes/navbar.php';
 <div class="modal-overlay" id="reviewComplianceModal">
     <div class="modal-container" style="max-width: 650px;">
         <form action="<?= url('instructor/update_status.php') ?>" method="POST">
+            <?= csrf_field() ?>
             <input type="hidden" name="action" value="single_update">
             <input type="hidden" name="status_id" id="revStatusId">
             <input type="hidden" name="subject_id" id="revSubjectId">
@@ -409,6 +412,7 @@ include __DIR__ . '/../includes/navbar.php';
 <div class="modal-overlay" id="deficiencyModal">
     <div class="modal-container">
         <form action="<?= url('instructor/update_status.php') ?>" method="POST">
+            <?= csrf_field() ?>
             <input type="hidden" name="action" value="single_update">
             <input type="hidden" name="status" value="deficient">
             <input type="hidden" name="status_id" id="modalStatusId">
@@ -446,6 +450,7 @@ include __DIR__ . '/../includes/navbar.php';
 <div class="modal-overlay" id="editRequirementsModal">
     <div class="modal-container" style="max-width: 600px;">
         <form action="<?= url('instructor/update_status.php') ?>" method="POST">
+            <?= csrf_field() ?>
             <input type="hidden" name="action" value="update_requirements">
             <input type="hidden" name="subject_id" id="reqSubjectId" value="<?= $currentSubject ? $currentSubject['id'] : '' ?>">
 

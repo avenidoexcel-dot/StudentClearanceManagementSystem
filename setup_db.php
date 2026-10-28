@@ -15,12 +15,14 @@ if (!file_exists($sqlFile)) {
 }
 
 require_once __DIR__ . '/config/db.php';
+require_once __DIR__ . '/config/session.php';
 require_once __DIR__ . '/config/helpers.php';
 
 $message = '';
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['install'])) {
+    require_csrf('setup_db.php');
     try {
         $sql = file_get_contents($sqlFile);
 
@@ -110,6 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['install'])) {
         </table>
 
         <form action="<?= url('setup_db.php') ?>" method="POST" style="margin-top: 24px; text-align: center;">
+            <?= csrf_field() ?>
             <button type="submit" name="install" value="1" class="btn btn-primary" style="width: 100%; padding: 14px;">
                 <i class="fa-solid fa-play"></i> Run Database Installer Now
             </button>

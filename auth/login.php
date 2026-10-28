@@ -11,61 +11,95 @@ if (is_logged_in()) {
 
 $error = '';
 $flash = get_flash();
+$clientIp = get_client_ip();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = trim($_POST['username'] ?? '');
-    $password = $_POST['password'] ?? '';
-
-    if (empty($username) || empty($password)) {
-        $error = 'Please enter both your username/ID and password.';
+    // 1. Verify CSRF Token
+    if (!validate_csrf()) {
+        $error = 'Security session expired. Please refresh and try again.';
     } else {
-        // Query user with department details if signatory
-        $stmt = $pdo->prepare("
-            SELECT u.*, d.name AS department_name 
-            FROM users u
-            LEFT JOIN departments d ON u.department_id = d.id
-            WHERE (u.username = ? OR u.student_id = ?) AND u.status = 'active'
-            LIMIT 1
-        ");
-        $stmt->execute([$username, $username]);
-        $user = $stmt->fetch();
+        $username = trim($_POST['username'] ?? '');
+        $password = $_POST['password'] ?? '';
 
-        // In seed data: default password for testing can be verified with password_verify
-        // or fallback check for default demo accounts (admin123, signatory123, instructor123, student123)
-        $valid = false;
-        if ($user) {
-            if (password_verify($password, $user['password'])) {
-                $valid = true;
-            } elseif (
-                ($user['role'] === 'admin' && $password === 'admin123') ||
-                ($user['role'] === 'signatory' && $password === 'signatory123') ||
-                ($user['role'] === 'instructor' && $password === 'instructor123') ||
-                ($user['role'] === 'student' && $password === 'student123')
-            ) {
-                $valid = true;
-                // Re-hash for security
-                $newHash = password_hash($password, PASSWORD_DEFAULT);
-                $updateHash = $pdo->prepare("UPDATE users SET password = ? WHERE id = ?");
-                $updateHash->execute([$newHash, $user['id']]);
-            }
-        }
-
-        if ($valid) {
-            $_SESSION['user_id']         = $user['id'];
-            $_SESSION['username']        = $user['username'];
-            $_SESSION['role']            = $user['role'];
-            $_SESSION['name']            = $user['first_name'] . ' ' . $user['last_name'];
-            $_SESSION['student_id']      = $user['student_id'];
-            $_SESSION['department_id']   = $user['department_id'];
-            $_SESSION['department_name'] = $user['department_name'];
-            $_SESSION['course']          = $user['course'];
-            $_SESSION['year_level']      = $user['year_level'];
-            $_SESSION['section']         = $user['section'];
-
-            set_flash('success', "Welcome back, " . $_SESSION['name'] . "!");
-            redirect("{$user['role']}/dashboard.php");
+        if (empty($username) || empty($password)) {
+            $error = 'Please enter both your username/ID and password.';
         } else {
-            $error = 'Invalid username/student ID or password.';
+            // 2. Rate Limiting Check (Max 5 failed attempts per 15-minute window)
+            $rateLimit = check_login_rate_limit($pdo, $clientIp, $username, 5, 900);
+
+            if (!$rateLimit['allowed']) {
+                $waitMinutes = ceil($rateLimit['wait_seconds'] / 60);
+                $error = "Too many failed login attempts. For security protection, your login has been temporarily locked. Please wait {$waitMinutes} minute(s) ({$rateLimit['wait_seconds']}s) before trying again.";
+            } else {
+                // 3. Query user
+                $stmt = $pdo->prepare("
+                    SELECT u.*, d.name AS department_name 
+                    FROM users u
+                    LEFT JOIN departments d ON u.department_id = d.id
+                    WHERE (u.username = ? OR u.student_id = ?) AND u.status = 'active'
+                    LIMIT 1
+                ");
+                $stmt->execute([$username, $username]);
+                $user = $stmt->fetch();
+
+                // 4. Verify Password with Bcrypt
+                $valid = false;
+                if ($user) {
+                    if (password_verify($password, $user['password'])) {
+                        $valid = true;
+                        // Automatic rehash if cost or algorithm changed
+                        if (password_needs_rehash($user['password'], PASSWORD_BCRYPT, ['cost' => 10])) {
+                            $rehashed = password_hash($password, PASSWORD_BCRYPT, ['cost' => 10]);
+                            $updStmt = $pdo->prepare("UPDATE users SET password = ? WHERE id = ?");
+                            $updStmt->execute([$rehashed, $user['id']]);
+                        }
+                    } elseif (
+                        // Fallback check for initial installation demo defaults before first Bcrypt conversion
+                        ($user['role'] === 'admin' && $password === 'admin123') ||
+                        ($user['role'] === 'signatory' && $password === 'signatory123') ||
+                        ($user['role'] === 'instructor' && $password === 'instructor123') ||
+                        ($user['role'] === 'student' && $password === 'student123')
+                    ) {
+                        $valid = true;
+                        $bcryptHash = password_hash($password, PASSWORD_BCRYPT, ['cost' => 10]);
+                        $updStmt = $pdo->prepare("UPDATE users SET password = ? WHERE id = ?");
+                        $updStmt->execute([$bcryptHash, $user['id']]);
+                    }
+                }
+
+                if ($valid) {
+                    // Reset rate limiter on successful login
+                    clear_login_rate_limit($pdo, $clientIp, $username);
+
+                    // Prevent session fixation attack
+                    session_regenerate_id(true);
+
+                    $_SESSION['user_id']         = $user['id'];
+                    $_SESSION['username']        = $user['username'];
+                    $_SESSION['role']            = $user['role'];
+                    $_SESSION['name']            = $user['first_name'] . ' ' . $user['last_name'];
+                    $_SESSION['student_id']      = $user['student_id'];
+                    $_SESSION['department_id']   = $user['department_id'];
+                    $_SESSION['department_name'] = $user['department_name'];
+                    $_SESSION['course']          = $user['course'];
+                    $_SESSION['year_level']      = $user['year_level'];
+                    $_SESSION['section']         = $user['section'];
+
+                    set_flash('success', "Welcome back, " . $_SESSION['name'] . "!");
+                    redirect("{$user['role']}/dashboard.php");
+                } else {
+                    // Record failure in rate limiter
+                    record_failed_login($pdo, $clientIp, $username);
+
+                    $updatedLimit = check_login_rate_limit($pdo, $clientIp, $username, 5, 900);
+                    if ($updatedLimit['remaining_attempts'] > 0) {
+                        $error = "Invalid username/student ID or password. ({$updatedLimit['remaining_attempts']} attempt(s) remaining before temporary lockout).";
+                    } else {
+                        $waitMinutes = ceil($updatedLimit['wait_seconds'] / 60);
+                        $error = "Too many failed attempts. Login locked for {$waitMinutes} minute(s).";
+                    }
+                }
+            }
         }
     }
 }
@@ -109,6 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php endif; ?>
 
         <form action="<?= url('auth/login.php') ?>" method="POST">
+            <?= csrf_field() ?>
             <div class="form-group">
                 <label class="form-label" for="username">Username or Student ID</label>
                 <div style="position: relative;">
