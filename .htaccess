@@ -2,8 +2,8 @@
 # Student Clearance Management System (ClearanceHub) - Apache Configuration
 # ==============================================================================
 
-# 1. Prevent Directory Browsing
-Options -Indexes
+# 1. Prevent Directory Browsing and Content Negotiation Conflicts
+Options -Indexes -MultiViews
 
 # 2. Set Default Directory Index
 DirectoryIndex index.php
@@ -21,3 +21,24 @@ DirectoryIndex index.php
 
 # 4. UTF-8 Character Encoding
 AddDefaultCharset UTF-8
+
+# 5. Clean / Extensionless URLs (mod_rewrite)
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # 5.1 If an external GET/HEAD request explicitly requests a *.php file, 301 redirect to extensionless URL
+    # (Skip index.php so the homepage / is not redirected in an infinite loop)
+    RewriteCond %{REQUEST_METHOD} ^(GET|HEAD)$ [NC]
+    RewriteCond %{THE_REQUEST} ^(GET|HEAD)\s([^.]+)\.php(\?[^\s]*)?\sHTTP [NC]
+    RewriteCond %{REQUEST_URI} !index\.php$ [NC]
+    RewriteRule ^ %2%3 [R=301,L]
+
+    # 5.2 Pass through existing real files and directories (CSS, JS, images, uploads)
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # 5.3 If the requested path with .php appended exists, rewrite internally to the PHP file
+    RewriteCond %{REQUEST_FILENAME}.php -f
+    RewriteRule ^(.+?)/?$ $1.php [L,QSA]
+</IfModule>

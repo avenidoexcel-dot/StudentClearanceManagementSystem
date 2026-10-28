@@ -1,6 +1,6 @@
 <?php
 $user = current_user();
-$current_page = basename($_SERVER['PHP_SELF']);
+$current_page = preg_replace('/\.php$/i', '', basename($_SERVER['PHP_SELF'] ?? ''));
 $flash = get_flash();
 ?>
 <div class="app-wrapper">
@@ -27,64 +27,64 @@ $flash = get_flash();
         <nav class="sidebar-nav">
             <?php if ($user && $user['role'] === 'student'): ?>
                 <div class="nav-section-title">Student Menu</div>
-                <a href="<?= url('student/dashboard.php') ?>" class="nav-link <?= $current_page === 'dashboard.php' ? 'active' : '' ?>">
+                <a href="<?= url('student/dashboard') ?>" class="nav-link <?= $current_page === 'dashboard' ? 'active' : '' ?>">
                     <i class="fa-solid fa-gauge-high"></i>
                     <span>My Clearance</span>
                 </a>
-                <a href="<?= url('student/request.php') ?>" class="nav-link <?= $current_page === 'request.php' ? 'active' : '' ?>">
+                <a href="<?= url('student/request') ?>" class="nav-link <?= $current_page === 'request' ? 'active' : '' ?>">
                     <i class="fa-solid fa-paper-plane"></i>
                     <span>Submit Request</span>
                 </a>
-                <a href="<?= url('student/certificate.php') ?>" class="nav-link <?= $current_page === 'certificate.php' ? 'active' : '' ?>">
+                <a href="<?= url('student/certificate') ?>" class="nav-link <?= $current_page === 'certificate' ? 'active' : '' ?>">
                     <i class="fa-solid fa-award"></i>
                     <span>Official Certificate</span>
                 </a>
 
             <?php elseif ($user && $user['role'] === 'instructor'): ?>
                 <div class="nav-section-title">Instructor Menu</div>
-                <a href="<?= url('instructor/dashboard.php') ?>" class="nav-link <?= $current_page === 'dashboard.php' ? 'active' : '' ?>">
+                <a href="<?= url('instructor/dashboard') ?>" class="nav-link <?= $current_page === 'dashboard' ? 'active' : '' ?>">
                     <i class="fa-solid fa-chalkboard-user"></i>
                     <span>My Classes & Students</span>
                 </a>
 
             <?php elseif ($user && $user['role'] === 'signatory'): ?>
                 <div class="nav-section-title">Department Menu</div>
-                <a href="<?= url('signatory/dashboard.php') ?>" class="nav-link <?= $current_page === 'dashboard.php' ? 'active' : '' ?>">
+                <a href="<?= url('signatory/dashboard') ?>" class="nav-link <?= $current_page === 'dashboard' ? 'active' : '' ?>">
                     <i class="fa-solid fa-building-columns"></i>
                     <span>Office Approvals</span>
                 </a>
 
             <?php elseif ($user && $user['role'] === 'admin'): ?>
                 <div class="nav-section-title">Admin Dashboard</div>
-                <a href="<?= url('admin/dashboard.php') ?>" class="nav-link <?= $current_page === 'dashboard.php' ? 'active' : '' ?>">
+                <a href="<?= url('admin/dashboard') ?>" class="nav-link <?= $current_page === 'dashboard' ? 'active' : '' ?>">
                     <i class="fa-solid fa-chart-pie"></i>
                     <span>Overview & Analytics</span>
                 </a>
                 <div class="nav-section-title">Management</div>
-                <a href="<?= url('admin/periods.php') ?>" class="nav-link <?= $current_page === 'periods.php' ? 'active' : '' ?>">
+                <a href="<?= url('admin/periods') ?>" class="nav-link <?= $current_page === 'periods' ? 'active' : '' ?>">
                     <i class="fa-solid fa-calendar-days"></i>
                     <span>Clearance Periods</span>
                 </a>
-                <a href="<?= url('admin/departments.php') ?>" class="nav-link <?= $current_page === 'departments.php' ? 'active' : '' ?>">
+                <a href="<?= url('admin/departments') ?>" class="nav-link <?= $current_page === 'departments' ? 'active' : '' ?>">
                     <i class="fa-solid fa-building-user"></i>
                     <span>Offices & Signatories</span>
                 </a>
-                <a href="<?= url('admin/subjects.php') ?>" class="nav-link <?= $current_page === 'subjects.php' ? 'active' : '' ?>">
+                <a href="<?= url('admin/subjects') ?>" class="nav-link <?= $current_page === 'subjects' ? 'active' : '' ?>">
                     <i class="fa-solid fa-book-bookmark"></i>
                     <span>Subjects & Instructors</span>
                 </a>
-                <a href="<?= url('admin/users.php') ?>" class="nav-link <?= $current_page === 'users.php' ? 'active' : '' ?>">
+                <a href="<?= url('admin/users') ?>" class="nav-link <?= $current_page === 'users' ? 'active' : '' ?>">
                     <i class="fa-solid fa-users-gear"></i>
                     <span>User Accounts</span>
                 </a>
-                <a href="<?= url('admin/reports.php') ?>" class="nav-link <?= $current_page === 'reports.php' ? 'active' : '' ?>">
+                <a href="<?= url('admin/reports') ?>" class="nav-link <?= $current_page === 'reports' ? 'active' : '' ?>">
                     <i class="fa-solid fa-file-invoice"></i>
                     <span>Master Reports</span>
                 </a>
             <?php endif; ?>
 
             <div class="nav-section-title">Public</div>
-            <a href="<?= url('verify.php') ?>" class="nav-link <?= $current_page === 'verify.php' ? 'active' : '' ?>">
+            <a href="<?= url('verify') ?>" class="nav-link <?= $current_page === 'verify' ? 'active' : '' ?>">
                 <i class="fa-solid fa-shield-halved"></i>
                 <span>Verify Certificate</span>
             </a>
@@ -100,7 +100,7 @@ $flash = get_flash();
                         <div class="user-meta-name"><?= e($user['name'] ?: $user['username']) ?></div>
                         <div class="user-meta-role"><?= e($user['role']) ?></div>
                     </div>
-                    <a href="<?= url('auth/logout.php') ?>" title="Logout" style="color: #ef4444; font-size: 16px; padding: 6px;">
+                    <a href="<?= url('auth/logout') ?>" title="Logout" style="color: #ef4444; font-size: 16px; padding: 6px;">
                         <i class="fa-solid fa-right-from-bracket"></i>
                     </a>
                 </div>
@@ -138,12 +138,12 @@ $flash = get_flash();
                             <span class="badge badge-primary badge-sm"><i class="fa-solid fa-id-badge"></i> <?= e(ucfirst($user['role'])) ?></span>
                         </div>
                     </div>
-                    <a href="<?= url('auth/logout.php') ?>" class="btn btn-outline btn-sm no-print logout-btn" title="Logout">
+                    <a href="<?= url('auth/logout') ?>" class="btn btn-outline btn-sm no-print logout-btn" title="Logout">
                         <i class="fa-solid fa-arrow-right-from-bracket"></i>
                         <span class="logout-label">Logout</span>
                     </a>
                 <?php else: ?>
-                    <a href="<?= url('auth/login.php') ?>" class="btn btn-primary btn-sm">
+                    <a href="<?= url('auth/login') ?>" class="btn btn-primary btn-sm">
                         <i class="fa-solid fa-user-lock"></i> Log In
                     </a>
                 <?php endif; ?>

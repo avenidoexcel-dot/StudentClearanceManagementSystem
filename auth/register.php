@@ -5,13 +5,13 @@ require_once __DIR__ . '/../config/helpers.php';
 
 if (is_logged_in()) {
     $role = $_SESSION['role'] ?? 'student';
-    redirect("{$role}/dashboard.php");
+    redirect("{$role}/dashboard");
 }
 
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    require_csrf('auth/register.php');
+    require_csrf('auth/register');
 
     $student_id = trim($_POST['student_id'] ?? '');
     $first_name = trim($_POST['first_name'] ?? '');
@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if ($success) {
                 set_flash('success', 'Registration successful! You may now log in.');
-                redirect('auth/login.php');
+                redirect('auth/login');
             } else {
                 $error = 'Registration failed. Please try again.';
             }
@@ -96,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         <?php endif; ?>
 
-        <form action="<?= url('auth/register.php') ?>" method="POST">
+        <form action="<?= url('auth/register') ?>" method="POST">
             <?= csrf_field() ?>
             <div class="form-row-2">
                 <div class="form-group">
@@ -171,7 +171,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </form>
 
         <div style="margin-top: 20px; text-align: center; font-size: 13px; color: var(--text-muted);">
-            Already have an account? <a href="<?= url('auth/login.php') ?>" style="font-weight: 600;">Sign in here</a>
+            Already have an account? <a href="<?= url('auth/login') ?>" style="font-weight: 600;">Sign in here</a>
         </div>
     </div>
 </div>

@@ -12,11 +12,19 @@ function e(?string $string): string {
 
 /**
  * Generate standard absolute URL for the application
+ * Automatically produces clean, extensionless URLs for PHP routes while preserving static asset paths
  */
 function url(string $path = ''): string {
     if (preg_match('#^https?://#i', $path)) {
         return $path;
     }
+
+    // Automatically strip .php extension from application script routes (e.g. auth/login.php -> auth/login)
+    // Leaves static assets (.css, .js, .png, .jpg, .svg, .pdf, etc.) intact
+    if ($path !== '' && !preg_match('/\.(css|js|png|jpe?g|gif|svg|ico|webp|pdf|docx?|xlsx?|zip|woff2?|ttf|eot)(\?.*)?$/i', $path)) {
+        $path = preg_replace('/\.php(\?|#|$)/i', '$1', $path);
+    }
+
     $base = defined('BASE_URL') ? BASE_URL : '/';
     return $base . ltrim($path, '/');
 }
@@ -25,7 +33,8 @@ function url(string $path = ''): string {
  * Generate standard static asset URL
  */
 function asset(string $path = ''): string {
-    return url($path);
+    $base = defined('BASE_URL') ? BASE_URL : '/';
+    return $base . ltrim($path, '/');
 }
 
 /**
@@ -50,12 +59,15 @@ function current_url(): string {
  * Check if the given route or page matches the current executing request
  */
 function is_active_route(string $route): bool {
-    $current = str_replace('\\', '/', $_SERVER['SCRIPT_NAME'] ?? '');
-    $routeClean = trim($route, '/');
-    if ($routeClean === '') {
-        return basename($current) === 'index.php';
+    $current = str_replace('\\', '/', $_SERVER['SCRIPT_NAME'] ?? ($_SERVER['PHP_SELF'] ?? ''));
+    $currentClean = preg_replace('/\.php$/i', '', trim($current, '/'));
+    $routeClean = preg_replace('/\.php$/i', '', trim($route, '/'));
+
+    if ($routeClean === '' || $routeClean === 'index') {
+        return basename($currentClean) === 'index' || basename($currentClean) === '';
     }
-    return (substr($current, -strlen($routeClean)) === $routeClean) || (basename($current) === basename($routeClean));
+
+    return (substr($currentClean, -strlen($routeClean)) === $routeClean) || (basename($currentClean) === basename($routeClean));
 }
 
 /**

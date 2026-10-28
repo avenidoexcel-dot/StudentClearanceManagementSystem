@@ -113,7 +113,7 @@ include __DIR__ . '/../includes/navbar.php';
 
 <!-- Filter Bar -->
 <div class="card no-print" style="padding: 18px 24px;">
-    <form action="<?= url('admin/reports.php') ?>" method="GET" class="filter-form" style="display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end;">
+    <form action="<?= url('admin/reports') ?>" method="GET" class="filter-form" style="display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end;">
         <div style="flex: 1; min-width: 200px;">
             <label class="form-label" style="font-size: 12px;">Clearance Period</label>
             <select name="period_id" class="form-control" onchange="this.form.submit()">
@@ -151,7 +151,7 @@ include __DIR__ . '/../includes/navbar.php';
 
         <div class="filter-actions">
             <button type="submit" class="btn btn-primary"><i class="fa-solid fa-filter"></i> Filter</button>
-            <a href="<?= url('admin/reports.php') ?>" class="btn btn-outline">Reset</a>
+            <a href="<?= url('admin/reports') ?>" class="btn btn-outline">Reset</a>
             <button type="button" onclick="window.print()" class="btn btn-outline">
                 <i class="fa-solid fa-print"></i> Print Roster
             </button>
@@ -253,7 +253,7 @@ include __DIR__ . '/../includes/navbar.php';
                                             title="Inspect compliance submissions, proof files, and deficient items">
                                         <i class="fa-solid fa-clipboard-check" style="color: var(--primary);"></i> Audit
                                     </button>
-                                    <a href="<?= url('student/certificate.php?request_id=' . $r['id']) ?>" target="_blank" class="btn btn-outline btn-sm" title="View or Print Certificate">
+                                    <a href="<?= url('student/certificate?request_id=' . $r['id']) ?>" target="_blank" class="btn btn-outline btn-sm" title="View or Print Certificate">
                                         <i class="fa-solid fa-file-lines"></i> Certificate
                                     </a>
                                 </div>

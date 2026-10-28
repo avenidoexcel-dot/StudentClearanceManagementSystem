@@ -5,8 +5,8 @@ require_once __DIR__ . '/config/helpers.php';
 
 if (is_logged_in()) {
     $role = $_SESSION['role'] ?? 'student';
-    redirect("{$role}/dashboard.php");
+    redirect("{$role}/dashboard");
 }
 
 // Redirect to login page for seamless entry
-redirect("auth/login.php");
+redirect("auth/login");

@@ -39,7 +39,7 @@ include __DIR__ . '/includes/navbar.php';
             Enter the unique clearance tracking code printed on the certificate to check its official institutional validity.
         </p>
 
-        <form action="<?= url('verify.php') ?>" method="GET" class="verify-form" style="display: flex; gap: 10px; max-width: 460px; margin: 0 auto; flex-wrap: wrap;">
+        <form action="<?= url('verify') ?>" method="GET" class="verify-form" style="display: flex; gap: 10px; max-width: 460px; margin: 0 auto; flex-wrap: wrap;">
             <input type="text" name="code" class="form-control" required placeholder="e.g. CLR-2026-A1B2C3D4" value="<?= e($code) ?>" style="font-family: monospace; text-transform: uppercase; flex: 1; min-width: 200px;">
             <button type="submit" class="btn btn-primary" style="padding: 10px 20px;">
                 <i class="fa-solid fa-magnifying-glass"></i> Verify

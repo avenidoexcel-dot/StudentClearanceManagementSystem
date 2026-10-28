@@ -14,4 +14,4 @@ session_destroy();
 
 session_start();
 set_flash('success', 'You have been successfully logged out.');
-redirect('auth/login.php');
+redirect('auth/login');

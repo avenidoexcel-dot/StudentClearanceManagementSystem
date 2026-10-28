@@ -6,7 +6,7 @@ require_once __DIR__ . '/../config/helpers.php';
 // If already logged in, redirect to respective dashboard
 if (is_logged_in()) {
     $role = $_SESSION['role'] ?? 'student';
-    redirect("{$role}/dashboard.php");
+    redirect("{$role}/dashboard");
 }
 
 $error = '';
@@ -86,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $_SESSION['section']         = $user['section'];
 
                     set_flash('success', "Welcome back, " . $_SESSION['name'] . "!");
-                    redirect("{$user['role']}/dashboard.php");
+                    redirect("{$user['role']}/dashboard");
                 } else {
                     // Record failure in rate limiter
                     record_failed_login($pdo, $clientIp, $username);
@@ -142,7 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         <?php endif; ?>
 
-        <form action="<?= url('auth/login.php') ?>" method="POST">
+        <form action="<?= url('auth/login') ?>" method="POST">
             <?= csrf_field() ?>
             <div class="form-group">
                 <label class="form-label" for="username">Username or Student ID</label>
@@ -166,7 +166,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </form>
 
         <div style="margin-top: 24px; text-align: center; font-size: 13px; color: var(--text-muted);">
-            Don't have an account yet? <a href="<?= url('auth/register.php') ?>" style="font-weight: 600;">Register as Student</a>
+            Don't have an account yet? <a href="<?= url('auth/register') ?>" style="font-weight: 600;">Register as Student</a>
         </div>
 
         <!-- Quick Demo Credentials Box -->

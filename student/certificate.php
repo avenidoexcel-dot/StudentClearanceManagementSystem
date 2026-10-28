@@ -37,7 +37,7 @@ if ($requestId && $user['role'] === 'admin') {
 
 if (!$request) {
     set_flash('error', 'No clearance record found.');
-    redirect($user['role'] === 'student' ? 'student/dashboard.php' : 'admin/dashboard.php');
+    redirect($user['role'] === 'student' ? 'student/dashboard' : 'admin/dashboard');
 }
 
 // Fetch all department sign-offs
@@ -74,7 +74,7 @@ include __DIR__ . '/../includes/navbar.php';
 ?>
 
 <div class="no-print" style="max-width: 900px; margin: 0 auto 20px auto; display: flex; align-items: center; justify-content: space-between;">
-    <a href="<?= url('student/dashboard.php') ?>" class="btn btn-outline">
+    <a href="<?= url('student/dashboard') ?>" class="btn btn-outline">
         <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
     </a>
     
@@ -211,7 +211,7 @@ include __DIR__ . '/../includes/navbar.php';
             <div style="font-size: 11px; color: #475569;">
                 <div><strong>Scan to Verify Authenticity</strong></div>
                 <div>Code: <code><?= e($request['clearance_code']) ?></code></div>
-                <div>Verify: <?= url('verify.php?code=' . urlencode($request['clearance_code'])) ?></div>
+                <div>Verify: <?= url('verify?code=' . urlencode($request['clearance_code'])) ?></div>
             </div>
         </div>
 

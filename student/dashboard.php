@@ -113,7 +113,7 @@ include __DIR__ . '/../includes/navbar.php';
                 </p>
             </div>
             <div>
-                <a href="<?= url('student/request.php') ?>" class="btn btn-primary" style="padding: 14px 24px; font-size: 15px; box-shadow: 0 4px 15px rgba(67, 56, 202, 0.4);">
+                <a href="<?= url('student/request') ?>" class="btn btn-primary" style="padding: 14px 24px; font-size: 15px; box-shadow: 0 4px 15px rgba(67, 56, 202, 0.4);">
                     <i class="fa-solid fa-paper-plane"></i> Submit Clearance Request Now
                 </a>
             </div>
@@ -179,7 +179,7 @@ include __DIR__ . '/../includes/navbar.php';
             </div>
             <div>
                 <?php if ($clearanceRequest['overall_status'] === 'cleared'): ?>
-                    <a href="<?= url('student/certificate.php') ?>" class="btn btn-success" target="_blank" style="box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);">
+                    <a href="<?= url('student/certificate') ?>" class="btn btn-success" target="_blank" style="box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);">
                         <i class="fa-solid fa-award"></i> View Official Clearance Certificate
                     </a>
                 <?php else: ?>
@@ -299,7 +299,7 @@ include __DIR__ . '/../includes/navbar.php';
                                     <?php endif; ?>
                                 </td>
                                 <td style="text-align: right;">
-                                    <a href="<?= url('student/upload_proof.php?type=subject&id=' . $subj['id']) ?>" 
+                                    <a href="<?= url('student/upload_proof?type=subject&id=' . $subj['id']) ?>" 
                                        class="btn <?= $subj['status'] === 'deficient' ? 'btn-danger' : 'btn-outline' ?> btn-sm"
                                        title="Submit or update compliance details for instructor review">
                                         <i class="fa-solid <?= $subj['status'] === 'deficient' ? 'fa-triangle-exclamation' : 'fa-upload' ?>"></i>
@@ -390,7 +390,7 @@ include __DIR__ . '/../includes/navbar.php';
                                 <?php endif; ?>
                             </td>
                             <td style="text-align: right;">
-                                <a href="<?= url('student/upload_proof.php?type=department&id=' . $dept['id']) ?>" 
+                                <a href="<?= url('student/upload_proof?type=department&id=' . $dept['id']) ?>" 
                                    class="btn <?= $dept['status'] === 'deficient' ? 'btn-danger' : 'btn-outline' ?> btn-sm" 
                                    title="Upload receipt or compliance document">
                                     <i class="fa-solid <?= $dept['status'] === 'deficient' ? 'fa-triangle-exclamation' : 'fa-upload' ?>"></i>

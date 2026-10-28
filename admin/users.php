@@ -12,7 +12,7 @@ if (isset($_GET['reset_pw'])) {
     $resetStmt = $pdo->prepare("UPDATE users SET password = ? WHERE id = ?");
     $resetStmt->execute([$defaultPass, $uid]);
     set_flash('success', 'User password has been reset to "password123".');
-    redirect('admin/users.php');
+    redirect('admin/users');
 }
 
 if (isset($_GET['toggle_status'])) {
@@ -20,13 +20,13 @@ if (isset($_GET['toggle_status'])) {
     $toggleStmt = $pdo->prepare("UPDATE users SET status = IF(status = 'active', 'inactive', 'active') WHERE id = ?");
     $toggleStmt->execute([$uid]);
     set_flash('success', 'User account status updated.');
-    redirect('admin/users.php');
+    redirect('admin/users');
 }
 
 // Handle Add User
 $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    require_csrf('admin/users.php');
+    require_csrf('admin/users');
 
     $role          = $_POST['role'] ?? 'student';
     $first_name    = trim($_POST['first_name'] ?? '');
@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ");
             $insert->execute([$username, $hashed, $role, $first_name, $last_name, $email, $student_id, $department_id, $course, $year_level, $section]);
             set_flash('success', "User '{$username}' ({$role}) created successfully.");
-            redirect('admin/users.php');
+            redirect('admin/users');
         }
     }
 }
@@ -87,11 +87,11 @@ include __DIR__ . '/../includes/navbar.php';
 
 <!-- Role Filter Tabs -->
 <div style="display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap;">
-    <a href="<?= url('admin/users.php') ?>" class="btn btn-sm <?= empty($roleFilter) ? 'btn-primary' : 'btn-outline' ?>">All Users</a>
-    <a href="<?= url('admin/users.php?role=student') ?>" class="btn btn-sm <?= $roleFilter === 'student' ? 'btn-primary' : 'btn-outline' ?>"><i class="fa-solid fa-user-graduate"></i> Students</a>
-    <a href="<?= url('admin/users.php?role=instructor') ?>" class="btn btn-sm <?= $roleFilter === 'instructor' ? 'btn-primary' : 'btn-outline' ?>"><i class="fa-solid fa-chalkboard-user"></i> Faculty Instructors</a>
-    <a href="<?= url('admin/users.php?role=signatory') ?>" class="btn btn-sm <?= $roleFilter === 'signatory' ? 'btn-primary' : 'btn-outline' ?>"><i class="fa-solid fa-building-user"></i> Department Signatories</a>
-    <a href="<?= url('admin/users.php?role=admin') ?>" class="btn btn-sm <?= $roleFilter === 'admin' ? 'btn-primary' : 'btn-outline' ?>"><i class="fa-solid fa-shield-halved"></i> Administrators</a>
+    <a href="<?= url('admin/users') ?>" class="btn btn-sm <?= empty($roleFilter) ? 'btn-primary' : 'btn-outline' ?>">All Users</a>
+    <a href="<?= url('admin/users?role=student') ?>" class="btn btn-sm <?= $roleFilter === 'student' ? 'btn-primary' : 'btn-outline' ?>"><i class="fa-solid fa-user-graduate"></i> Students</a>
+    <a href="<?= url('admin/users?role=instructor') ?>" class="btn btn-sm <?= $roleFilter === 'instructor' ? 'btn-primary' : 'btn-outline' ?>"><i class="fa-solid fa-chalkboard-user"></i> Faculty Instructors</a>
+    <a href="<?= url('admin/users?role=signatory') ?>" class="btn btn-sm <?= $roleFilter === 'signatory' ? 'btn-primary' : 'btn-outline' ?>"><i class="fa-solid fa-building-user"></i> Department Signatories</a>
+    <a href="<?= url('admin/users?role=admin') ?>" class="btn btn-sm <?= $roleFilter === 'admin' ? 'btn-primary' : 'btn-outline' ?>"><i class="fa-solid fa-shield-halved"></i> Administrators</a>
 </div>
 
 <div class="grid-2-1">
@@ -149,10 +149,10 @@ include __DIR__ . '/../includes/navbar.php';
                             </td>
                             <td style="text-align: right;">
                                 <div style="display: inline-flex; gap: 4px;">
-                                    <a href="<?= url('admin/users.php?reset_pw=' . $u['id']) ?>" class="btn btn-outline btn-sm" title="Reset password to password123" onclick="return confirm('Reset this password to password123?');">
+                                    <a href="<?= url('admin/users?reset_pw=' . $u['id']) ?>" class="btn btn-outline btn-sm" title="Reset password to password123" onclick="return confirm('Reset this password to password123?');">
                                         <i class="fa-solid fa-key"></i>
                                     </a>
-                                    <a href="<?= url('admin/users.php?toggle_status=' . $u['id']) ?>" class="btn btn-outline btn-sm" title="Toggle active status">
+                                    <a href="<?= url('admin/users?toggle_status=' . $u['id']) ?>" class="btn btn-outline btn-sm" title="Toggle active status">
                                         <i class="fa-solid <?= $u['status'] === 'active' ? 'fa-ban' : 'fa-check' ?>"></i>
                                     </a>
                                 </div>
@@ -180,7 +180,7 @@ include __DIR__ . '/../includes/navbar.php';
             </div>
         <?php endif; ?>
 
-        <form action="<?= url('admin/users.php' . (!empty($roleFilter) ? '?role=' . urlencode($roleFilter) : '')) ?>" method="POST" id="userForm">
+        <form action="<?= url('admin/users' . (!empty($roleFilter) ? '?role=' . urlencode($roleFilter) : '')) ?>" method="POST" id="userForm">
             <?= csrf_field() ?>
             <div class="form-group">
                 <label class="form-label" for="userRole">Account Role *</label>

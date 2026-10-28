@@ -12,7 +12,7 @@ $activePeriod = $periodStmt->fetch();
 
 if (!$activePeriod) {
     set_flash('error', 'There is no active clearance period open at the moment.');
-    redirect('student/dashboard.php');
+    redirect('student/dashboard');
 }
 
 // 2. Check if request already exists
@@ -22,13 +22,13 @@ $existingRequest = $checkStmt->fetch();
 
 if ($existingRequest) {
     set_flash('info', 'You already have an active clearance request for this period.');
-    redirect('student/dashboard.php');
+    redirect('student/dashboard');
 }
 
 // 3. Process Request Submission
 $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    require_csrf('student/request.php');
+    require_csrf('student/request');
 
     $note = trim($_POST['note'] ?? '');
 
@@ -96,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $pdo->commit();
 
         set_flash('success', 'Your clearance request has been successfully submitted! Tracking Code: ' . $clearanceCode);
-        redirect('student/dashboard.php');
+        redirect('student/dashboard');
 
     } catch (Exception $e) {
         $pdo->rollBack();
@@ -196,7 +196,7 @@ include __DIR__ . '/../includes/navbar.php';
             </div>
         </div>
 
-        <form action="<?= url('student/request.php') ?>" method="POST">
+        <form action="<?= url('student/request') ?>" method="POST">
             <?= csrf_field() ?>
             <div class="form-group">
                 <label class="form-label" for="note">Submission Note / Remarks (Optional)</label>
@@ -204,7 +204,7 @@ include __DIR__ . '/../includes/navbar.php';
             </div>
 
             <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
-                <a href="<?= url('student/dashboard.php') ?>" class="btn btn-outline">Cancel</a>
+                <a href="<?= url('student/dashboard') ?>" class="btn btn-outline">Cancel</a>
                 <button type="submit" class="btn btn-primary" style="padding: 11px 24px;">
                     <i class="fa-solid fa-paper-plane"></i> Confirm & Submit Clearance
                 </button>

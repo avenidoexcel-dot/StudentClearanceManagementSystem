@@ -20,7 +20,7 @@ ensure_clearance_requirements_column($pdo);
 
 $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    require_csrf('admin/subjects.php');
+    require_csrf('admin/subjects');
     $code                   = strtoupper(trim($_POST['code'] ?? ''));
     $name                   = trim($_POST['name'] ?? '');
     $instructor_id          = (int)($_POST['instructor_id'] ?? 0);
@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ");
         $stmt->execute([$code, $name, $clearance_requirements !== '' ? $clearance_requirements : null, $instructor_id, $period_id]);
         set_flash('success', "Subject '{$code}' created and assigned to instructor.");
-        redirect('admin/subjects.php');
+        redirect('admin/subjects');
     }
 }
 
@@ -129,7 +129,7 @@ include __DIR__ . '/../includes/navbar.php';
             </div>
         <?php endif; ?>
 
-        <form action="<?= url('admin/subjects.php') ?>" method="POST">
+        <form action="<?= url('admin/subjects') ?>" method="POST">
             <?= csrf_field() ?>
             <div class="form-group">
                 <label class="form-label" for="period_id">Clearance Period *</label>

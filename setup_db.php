@@ -22,7 +22,7 @@ $message = '';
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['install'])) {
-    require_csrf('setup_db.php');
+    require_csrf('setup_db');
     try {
         $sql = file_get_contents($sqlFile);
 
@@ -79,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['install'])) {
             <i class="fa-solid fa-circle-check"></i> <?= htmlspecialchars($message) ?>
         </div>
         <div style="text-align: center; margin-top: 20px;">
-            <a href="<?= url('auth/login.php') ?>" class="btn btn-primary">Go to Login Page &rarr;</a>
+            <a href="<?= url('auth/login') ?>" class="btn btn-primary">Go to Login Page &rarr;</a>
         </div>
     <?php endif; ?>
 
@@ -111,7 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['install'])) {
             </tbody>
         </table>
 
-        <form action="<?= url('setup_db.php') ?>" method="POST" style="margin-top: 24px; text-align: center;">
+        <form action="<?= url('setup_db') ?>" method="POST" style="margin-top: 24px; text-align: center;">
             <?= csrf_field() ?>
             <button type="submit" name="install" value="1" class="btn btn-primary" style="width: 100%; padding: 14px;">
                 <i class="fa-solid fa-play"></i> Run Database Installer Now

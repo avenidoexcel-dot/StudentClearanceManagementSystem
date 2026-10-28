@@ -60,15 +60,15 @@ function require_role($allowed_roles) {
         set_flash('error', 'Unauthorized access for your account role.');
         // Redirect to their respective dashboard
         if ($current_role === 'student') {
-            redirect('student/dashboard.php');
+            redirect('student/dashboard');
         } elseif ($current_role === 'instructor') {
-            redirect('instructor/dashboard.php');
+            redirect('instructor/dashboard');
         } elseif ($current_role === 'signatory') {
-            redirect('signatory/dashboard.php');
+            redirect('signatory/dashboard');
         } elseif ($current_role === 'admin') {
-            redirect('admin/dashboard.php');
+            redirect('admin/dashboard');
         } else {
-            redirect('auth/login.php');
+            redirect('auth/login');
         }
     }
 }

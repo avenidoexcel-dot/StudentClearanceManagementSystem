@@ -87,7 +87,7 @@ include __DIR__ . '/../includes/navbar.php';
     <!-- Subject Selection Pills -->
     <div style="display: flex; gap: 12px; margin-bottom: 24px; overflow-x: auto; padding-bottom: 8px;">
         <?php foreach ($subjects as $subj): ?>
-            <a href="<?= url('instructor/dashboard.php?subject_id=' . $subj['id']) ?>" class="btn <?= $subj['id'] == $selectedSubjectId ? 'btn-primary' : 'btn-outline' ?>" style="border-radius: var(--radius-full); padding: 8px 18px;">
+            <a href="<?= url('instructor/dashboard?subject_id=' . $subj['id']) ?>" class="btn <?= $subj['id'] == $selectedSubjectId ? 'btn-primary' : 'btn-outline' ?>" style="border-radius: var(--radius-full); padding: 8px 18px;">
                 <i class="fa-solid fa-book"></i>
                 <span><strong><?= e($subj['code']) ?></strong> - <?= e($subj['name']) ?></span>
                 <span class="badge" style="background: rgba(255,255,255,0.25); color: inherit; margin-left: 6px;">
@@ -184,7 +184,7 @@ include __DIR__ . '/../includes/navbar.php';
                         <input type="text" data-table-search="#studentsTable" class="form-control btn-sm" style="padding-left: 28px; width: 220px;" placeholder="Search student name or ID...">
                     </div>
 
-                    <form action="<?= url('instructor/update_status.php') ?>" method="POST" onsubmit="return confirm('Are you sure you want to approve ALL pending students in this class?');">
+                    <form action="<?= url('instructor/update_status') ?>" method="POST" onsubmit="return confirm('Are you sure you want to approve ALL pending students in this class?');">
                         <?= csrf_field() ?>
                         <input type="hidden" name="action" value="batch_approve">
                         <input type="hidden" name="subject_id" value="<?= $currentSubject['id'] ?>">
@@ -283,7 +283,7 @@ include __DIR__ . '/../includes/navbar.php';
                                             </button>
 
                                             <!-- Quick Approve Form -->
-                                            <form action="<?= url('instructor/update_status.php') ?>" method="POST" style="display: inline;">
+                                            <form action="<?= url('instructor/update_status') ?>" method="POST" style="display: inline;">
                                                 <?= csrf_field() ?>
                                                 <input type="hidden" name="action" value="single_update">
                                                 <input type="hidden" name="status_id" value="<?= $st['status_id'] ?>">
@@ -318,7 +318,7 @@ include __DIR__ . '/../includes/navbar.php';
 <!-- Comprehensive Review Compliance Modal -->
 <div class="modal-overlay" id="reviewComplianceModal">
     <div class="modal-container" style="max-width: 650px;">
-        <form action="<?= url('instructor/update_status.php') ?>" method="POST">
+        <form action="<?= url('instructor/update_status') ?>" method="POST">
             <?= csrf_field() ?>
             <input type="hidden" name="action" value="single_update">
             <input type="hidden" name="status_id" id="revStatusId">
@@ -411,7 +411,7 @@ include __DIR__ . '/../includes/navbar.php';
 <!-- Deficiency Modal (Quick Action) -->
 <div class="modal-overlay" id="deficiencyModal">
     <div class="modal-container">
-        <form action="<?= url('instructor/update_status.php') ?>" method="POST">
+        <form action="<?= url('instructor/update_status') ?>" method="POST">
             <?= csrf_field() ?>
             <input type="hidden" name="action" value="single_update">
             <input type="hidden" name="status" value="deficient">
@@ -449,7 +449,7 @@ include __DIR__ . '/../includes/navbar.php';
 <!-- Edit Subject Clearance Requirements Modal -->
 <div class="modal-overlay" id="editRequirementsModal">
     <div class="modal-container" style="max-width: 600px;">
-        <form action="<?= url('instructor/update_status.php') ?>" method="POST">
+        <form action="<?= url('instructor/update_status') ?>" method="POST">
             <?= csrf_field() ?>
             <input type="hidden" name="action" value="update_requirements">
             <input type="hidden" name="subject_id" id="reqSubjectId" value="<?= $currentSubject ? $currentSubject['id'] : '' ?>">

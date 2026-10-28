@@ -9,7 +9,7 @@ $error = '';
 
 // Handle Add Department
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    require_csrf('admin/departments.php');
+    require_csrf('admin/departments');
     $code           = strtoupper(trim($_POST['code'] ?? ''));
     $name           = trim($_POST['name'] ?? '');
     $description    = trim($_POST['description'] ?? '');
@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ");
             $insert->execute([$code, $name, $description, $requires_proof]);
             set_flash('success', "Department '{$name}' created successfully.");
-            redirect('admin/departments.php');
+            redirect('admin/departments');
         }
     }
 }
@@ -111,7 +111,7 @@ include __DIR__ . '/../includes/navbar.php';
             </div>
         <?php endif; ?>
 
-        <form action="<?= url('admin/departments.php') ?>" method="POST">
+        <form action="<?= url('admin/departments') ?>" method="POST">
             <?= csrf_field() ?>
             <div class="form-group">
                 <label class="form-label" for="code">Office Code *</label>

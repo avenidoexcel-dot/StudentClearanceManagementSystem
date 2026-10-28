@@ -7,13 +7,13 @@ require_role('instructor');
 $user = current_user();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    redirect('instructor/dashboard.php');
+    redirect('instructor/dashboard');
 }
 
 $action    = $_POST['action'] ?? '';
 $subjectId = (int)($_POST['subject_id'] ?? 0);
 
-require_csrf('instructor/dashboard.php?subject_id=' . $subjectId);
+require_csrf('instructor/dashboard?subject_id=' . $subjectId);
 
 if ($action === 'single_update') {
     $statusId = (int)($_POST['status_id'] ?? 0);
@@ -102,4 +102,4 @@ if ($action === 'single_update') {
     }
 }
 
-redirect('instructor/dashboard.php?subject_id=' . $subjectId);
+redirect('instructor/dashboard?subject_id=' . $subjectId);

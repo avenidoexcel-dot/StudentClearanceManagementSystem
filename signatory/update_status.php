@@ -7,10 +7,10 @@ require_role('signatory');
 $user = current_user();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    redirect('signatory/dashboard.php');
+    redirect('signatory/dashboard');
 }
 
-require_csrf('signatory/dashboard.php');
+require_csrf('signatory/dashboard');
 
 $action = $_POST['action'] ?? '';
 $deptId = (int)($user['department_id'] ?? 0);
@@ -77,4 +77,4 @@ if ($action === 'single_update') {
     }
 }
 
-redirect('signatory/dashboard.php');
+redirect('signatory/dashboard');

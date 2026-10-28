@@ -47,11 +47,11 @@ if ($type === 'subject') {
 
 if (!$record) {
     set_flash('error', 'Clearance requirement record not found or access unauthorized.');
-    redirect('student/dashboard.php');
+    redirect('student/dashboard');
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    require_csrf("student/upload_proof.php?type={$type}&id={$id}");
+    require_csrf("student/upload_proof?type={$type}&id={$id}");
 
     $studentNote = trim($_POST['student_note'] ?? '');
     $uploadedFileName = null;
@@ -142,7 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $resubmitMsg = ($record['status'] === 'deficient') ? ' Deficiencies addressed and resubmitted for re-verification.' : '';
         set_flash('success', 'Compliance details submitted successfully for ' . $targetLabel . '.' . $resubmitMsg);
-        redirect('student/dashboard.php');
+        redirect('student/dashboard');
     }
 }
 
@@ -154,7 +154,7 @@ include __DIR__ . '/../includes/navbar.php';
 
 <div style="max-width: 680px; margin: 0 auto;">
     <div style="margin-bottom: 16px;">
-        <a href="<?= url('student/dashboard.php') ?>" class="btn btn-outline btn-sm">
+        <a href="<?= url('student/dashboard') ?>" class="btn btn-outline btn-sm">
             <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
         </a>
     </div>
@@ -277,7 +277,7 @@ include __DIR__ . '/../includes/navbar.php';
         <?php endif; ?>
 
         <!-- Submission Form -->
-        <form action="<?= url('student/upload_proof.php?type=' . $type . '&id=' . $id) ?>" method="POST" enctype="multipart/form-data">
+        <form action="<?= url('student/upload_proof?type=' . $type . '&id=' . $id) ?>" method="POST" enctype="multipart/form-data">
             <?= csrf_field() ?>
             <div class="form-group">
                 <label class="form-label" for="proof_file">
@@ -306,7 +306,7 @@ include __DIR__ . '/../includes/navbar.php';
             </div>
 
             <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
-                <a href="<?= url('student/dashboard.php') ?>" class="btn btn-outline">Cancel</a>
+                <a href="<?= url('student/dashboard') ?>" class="btn btn-outline">Cancel</a>
                 <button type="submit" class="btn btn-primary">
                     <i class="fa-solid fa-cloud-arrow-up"></i>
                     <?= (!empty($record['proof_file']) || !empty($record['student_note'])) ? 'Update Compliance Submission' : 'Submit Compliance' ?>

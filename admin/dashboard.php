@@ -131,7 +131,7 @@ include __DIR__ . '/../includes/navbar.php';
         <?php else: ?>
             <div style="padding: 24px 0; text-align: center; color: var(--text-muted);">
                 <p>No active clearance period configured.</p>
-                <a href="<?= url('admin/periods.php') ?>" class="btn btn-primary btn-sm" style="margin-top: 10px;">
+                <a href="<?= url('admin/periods') ?>" class="btn btn-primary btn-sm" style="margin-top: 10px;">
                     <i class="fa-solid fa-plus"></i> Set Up Clearance Period
                 </a>
             </div>
@@ -148,23 +148,23 @@ include __DIR__ . '/../includes/navbar.php';
         </div>
 
         <div style="display: flex; flex-direction: column; gap: 10px;">
-            <a href="<?= url('admin/periods.php') ?>" class="btn btn-outline" style="justify-content: flex-start;">
+            <a href="<?= url('admin/periods') ?>" class="btn btn-outline" style="justify-content: flex-start;">
                 <i class="fa-solid fa-calendar-days" style="width: 20px; color: var(--primary);"></i>
                 <span>Manage Clearance Periods</span>
             </a>
-            <a href="<?= url('admin/departments.php') ?>" class="btn btn-outline" style="justify-content: flex-start;">
+            <a href="<?= url('admin/departments') ?>" class="btn btn-outline" style="justify-content: flex-start;">
                 <i class="fa-solid fa-building-user" style="width: 20px; color: var(--secondary);"></i>
                 <span>Manage Departments & Offices</span>
             </a>
-            <a href="<?= url('admin/subjects.php') ?>" class="btn btn-outline" style="justify-content: flex-start;">
+            <a href="<?= url('admin/subjects') ?>" class="btn btn-outline" style="justify-content: flex-start;">
                 <i class="fa-solid fa-book-bookmark" style="width: 20px; color: #10b981;"></i>
                 <span>Assign Subjects & Instructors</span>
             </a>
-            <a href="<?= url('admin/users.php') ?>" class="btn btn-outline" style="justify-content: flex-start;">
+            <a href="<?= url('admin/users') ?>" class="btn btn-outline" style="justify-content: flex-start;">
                 <i class="fa-solid fa-users-gear" style="width: 20px; color: #f59e0b;"></i>
                 <span>User Accounts & Roles</span>
             </a>
-            <a href="<?= url('admin/reports.php') ?>" class="btn btn-outline" style="justify-content: flex-start;">
+            <a href="<?= url('admin/reports') ?>" class="btn btn-outline" style="justify-content: flex-start;">
                 <i class="fa-solid fa-file-invoice" style="width: 20px; color: #ec4899;"></i>
                 <span>Master Reports & Exports</span>
             </a>
@@ -179,7 +179,7 @@ include __DIR__ . '/../includes/navbar.php';
             <i class="fa-solid fa-clock-rotate-left" style="color: var(--primary);"></i>
             <span>Recent Student Clearance Submissions</span>
         </div>
-        <a href="<?= url('admin/reports.php') ?>" class="btn btn-outline btn-sm">
+        <a href="<?= url('admin/reports') ?>" class="btn btn-outline btn-sm">
             View All in Master Reports <i class="fa-solid fa-arrow-right"></i>
         </a>
     </div>
@@ -212,7 +212,7 @@ include __DIR__ . '/../includes/navbar.php';
                             <td><?= format_datetime($req['created_at']) ?></td>
                             <td><?= render_status_badge($req['overall_status']) ?></td>
                             <td style="text-align: right;">
-                                <a href="<?= url('student/certificate.php?request_id=' . $req['id']) ?>" class="btn btn-outline btn-sm" target="_blank">
+                                <a href="<?= url('student/certificate?request_id=' . $req['id']) ?>" class="btn btn-outline btn-sm" target="_blank">
                                     <i class="fa-solid fa-certificate"></i> Inspect
                                 </a>
                             </td>
